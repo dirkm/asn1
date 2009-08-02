@@ -1,5 +1,10 @@
-#ifndef SNACC_LEX_HPP
-#define SNACC_LEX_HPP
+#ifndef ASN1_LEX_HPP
+#define ASN1_LEX_HPP
+
+#include <boost/spirit/include/lex_lexertl.hpp>
+
+using namespace boost::spirit;
+using namespace boost::spirit::lex;
 
 enum tokenids 
 {
@@ -16,9 +21,15 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
         // define tokens and associate them with the lexer
         word = "[^ \t\n]+";
         this->self = word | '\n' | boost::spirit::lex::token_def<>(".", IDANY);
+
+        // define the whitespace to ignore (spaces, tabs, newlines and C-style 
+        // comments)
+        this->self("WS")
+            =   token_def<>("[ \\t\\n]+")
+	    | "--(-[^\\-\\n]|[^\\-\\n])*(--|\\n|-\\n)" 
+            ;
     }
     boost::spirit::lex::token_def<std::string> word;
 };
-//]
 
 #endif
