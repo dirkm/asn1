@@ -26,13 +26,13 @@ struct asn1_grammar : grammar<Iterator>
         using boost::phoenix::ref;
         using boost::phoenix::size;
 
-        //  associate the defined tokens with the lexer, at the same time 
-        //  defining the actions to be executed 
-        start =  *(   tok.word      [ ++ref(w), ref(c) += size(_1) ]
-                  |   lit('\n')     [ ++ref(l), ++ref(c) ] 
-                  |   token(IDANY)  [ ++ref(c) ]
-                  )
-              ;
+	// associate the defined tokens with the lexer, at the same time 
+	// defining the actions to be executed 
+	start =  *(   tok.word      [ ++ref(w), ref(c) += size(_1) ]
+		      |   lit("test")     [ ++ref(l), ++ref(c) ] 
+		      |   token(IDANY)  [ ++ref(c) ]
+	   )
+	   ;
     }
 
     std::size_t c, w, l;      // counter for characters, words, and lines

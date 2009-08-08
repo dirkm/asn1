@@ -12,7 +12,7 @@ all: syntax/lex_static.hpp syntax/lex syntax/parse
 clean:
 	rm -f  $(OBJS) $(OBJS:.o=.d) $(PROGRAMS) syntax/lex_static.hpp
 
-syntax/generate_static_lex: syntax/generate_static_lex.o
+syntax/generate_static_lex:	 syntax/generate_static_lex.o
 	${CXX} $^ -o $@
 
 syntax/parse: syntax/parse.o

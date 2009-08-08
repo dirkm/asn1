@@ -1,11 +1,9 @@
-// #define BOOST_SPIRIT_LEXERTL_DEBUG
+#define BOOST_SPIRIT_LEXERTL_DEBUG
 #define BOOST_VARIANT_MINIMIZE_SIZE
 
-#include <boost/config/warning_disable.hpp>
+// #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
-//[wc_static_include
 #include <boost/spirit/include/lex_static_lexertl.hpp>
-//]
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_statement.hpp>
 #include <boost/spirit/include/phoenix_container.hpp>
@@ -34,16 +32,17 @@ int main(int argc, char* argv[])
     // Define the iterator type exposed by the lexer.
     typedef asn1_tokens<lexer_type>::iterator_type iterator_type;
 
-    asn1_tokens<lexer_type> word_count;           // Our lexer
-    asn1_grammar<iterator_type> g (word_count);   // Our parser
+    asn1_tokens<lexer_type> asn1_lex;           // Our lexer
+    asn1_grammar<iterator_type> g (asn1_lex);   // Our parser
 
     // Read in the file into memory.
-    std::string str (read_from_file(1 == argc ? "word_count.input" : argv[1]));
+    std::string str (read_from_file(1 == argc ? "data/asn1_comments.input" : argv[1]));
     char const* first = str.c_str();
     char const* last = &first[str.size()];
 
     // Parsing is done based on the the token stream, not the character stream.
-    bool r = tokenize_and_parse(first, last, word_count, g);
+    std::string ws("WS");
+    bool r = tokenize_and_parse(first, last, asn1_lex, g,in_state(ws)[asn1_lex.self]);
 
     if (r) {    // success
         std::cout << "lines: " << g.l << ", words: " << g.w 
