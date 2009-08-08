@@ -1,4 +1,4 @@
-#define BOOST_SPIRIT_LEXERTL_DEBUG
+#define BOOST_SPIRIT_DEBUG
 #define BOOST_SPIRIT_LEXERTL_DEBUG
 
 #define BOOST_VARIANT_MINIMIZE_SIZE
@@ -27,8 +27,11 @@ int main(int argc, char* argv[])
         char const*, boost::mpl::vector<std::string>
     > token_type;
 
+    // typedef asn1_tokens<token_type> lexer_type; 
+
+    // typedef lexertl::lexer<token_type> lexer_type;
     typedef lexertl::static_lexer<
-        token_type, lexertl::static_::lexer_asn1
+       token_type, lexertl::static_::lexer_asn1
     > lexer_type;
 
     // Define the iterator type exposed by the lexer.
@@ -42,10 +45,13 @@ int main(int argc, char* argv[])
     char const* first = str.c_str();
     char const* last = &first[str.size()];
 
-    std::string ws("WS");
-    bool r = tokenize_and_phrase_parse(first, last, asn1_lex, g,in_state(ws)[asn1_lex.self],boost::spirit::qi::skip_flag::postskip);
-
-    if (r) {    // success
+    bool r = tokenize_and_phrase_parse(
+       first, last, asn1_lex, g,
+       in_state("WS")[asn1_lex.self],boost::spirit::qi::skip_flag::postskip);
+    // boost::spirit::qi::skip_flag::dont_postskip
+    if (r && (first==last)) 
+    {    // success
+       std::string rest(first, last);
     }
     else {
         std::string rest(first, last);
