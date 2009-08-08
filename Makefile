@@ -27,8 +27,9 @@ syntax/lex_static.hpp: syntax/generate_static_lex
 syntax/parse.d syntax/lex.d: syntax/lex_static.hpp
 
 %.d: %.cpp
-	$(CXX) -MM $(CPPFLAGS) $< | \
-	sed 's,$(*F)\.o[ :]*,$(@:.d=.o) $@ : ,g' > $@;
+	$(CXX) -MM $(CPPFLAGS) $< > $@.$$$$ && \
+	sed 's,$(*F)\.o[ :]*,$(@:.d=.o) $@ : ,g' < $@.$$$$ > $@ && \
+	rm -f $@.$$$$
 
 ifneq ($(MAKECMDGOALS),clean)
 sinclude $(OBJS:.o=.d)

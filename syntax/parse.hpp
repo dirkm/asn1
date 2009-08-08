@@ -2,7 +2,7 @@
 #define ASN1_PARSE_HPP
 
 #include "syntax/lex_static.hpp" 
-//#include "syntax/lex.hpp" 
+#include "syntax/lex.hpp" 
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/lex_lexertl.hpp>

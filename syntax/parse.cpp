@@ -1,16 +1,3 @@
-//  Copyright (c) 2001-2009 Hartmut Kaiser
-// 
-//  Distributed under the Boost Software License, Version 1.0. (See accompanying 
-//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-
-//  The purpose of this example is to show, how it is possible to use a lexer 
-//  token definition for two purposes:
-//
-//    . To generate C++ code implementing a static lexical analyzer allowing
-//      to recognize all defined tokens 
-//    . To integrate the generated C++ lexer into the /Spirit/ framework.
-//
-
 // #define BOOST_SPIRIT_LEXERTL_DEBUG
 #define BOOST_VARIANT_MINIMIZE_SIZE
 
