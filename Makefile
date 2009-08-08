@@ -9,6 +9,9 @@ CPPFLAGS:=$(INCLUDES) $(EXTRAFLAGS)
 
 all: syntax/lex_static.hpp syntax/lex syntax/parse
 
+clean:
+	rm -f  $(OBJS) $(OBJS:.o=.d) $(PROGRAMS) syntax/lex_static.hpp
+
 syntax/generate_static_lex: syntax/generate_static_lex.o
 	${CXX} $^ -o $@
 
@@ -21,14 +24,13 @@ syntax/lex: syntax/lex.o
 syntax/lex_static.hpp: syntax/generate_static_lex
 	./$^ $@
 
-clean:
-	rm -f  $(OBJS) $(OBJS:.o=.d) $(PROGRAMS) syntax/lex_static.hpp
+syntax/parse.d syntax/lex.d: syntax/lex_static.hpp
 
 %.d: %.cpp
 	$(CXX) -MM $(CPPFLAGS) $< > $@.$$$$ && \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@ && \
 	rm -f $@.$$$$
 
-syntax/parse.d syntax/lex.d: syntax/lex_static.hpp
-
+ifneq ($(MAKECMDGOALS),clean)
 include $(OBJS:.o=.d)
+endif
