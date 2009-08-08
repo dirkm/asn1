@@ -24,7 +24,7 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 
         // define the whitespace to ignore (spaces, tabs, newlines and C-style 
         // comments)
-        this->self("WS")
+       this->self("WS")
             =   token_def<>("[ \\t\\n]+")
 	    | "--(-[^\\-\\n]|[^\\-\\n])*(--|\\n|-\\n)" 
             ;
