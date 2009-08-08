@@ -1,4 +1,6 @@
 #define BOOST_SPIRIT_LEXERTL_DEBUG
+#define BOOST_SPIRIT_LEXERTL_DEBUG
+
 #define BOOST_VARIANT_MINIMIZE_SIZE
 
 // #include <boost/config/warning_disable.hpp>
@@ -40,13 +42,10 @@ int main(int argc, char* argv[])
     char const* first = str.c_str();
     char const* last = &first[str.size()];
 
-    // Parsing is done based on the the token stream, not the character stream.
     std::string ws("WS");
-    bool r = tokenize_and_parse(first, last, asn1_lex, g,in_state(ws)[asn1_lex.self]);
+    bool r = tokenize_and_phrase_parse(first, last, asn1_lex, g,in_state(ws)[asn1_lex.self],boost::spirit::qi::skip_flag::postskip);
 
     if (r) {    // success
-        std::cout << "lines: " << g.l << ", words: " << g.w 
-                  << ", characters: " << g.c << "\n";
     }
     else {
         std::string rest(first, last);
