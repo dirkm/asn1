@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
    // boost::spirit::qi::skip_flag::dont_postskip
    if (r && (first==last))
    {    // success
-      std::string rest(first, last);
+      std::cerr << "keep it real" << std::endl;
    }
    else {
       std::string rest(first, last);
