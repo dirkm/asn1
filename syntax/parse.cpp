@@ -13,8 +13,8 @@
 #include <iostream>
 #include <string>
 
-#include "syntax/parse.hpp" 
-#include "syntax/read_from_file.hpp" 
+#include "syntax/parse.hpp"
+#include "syntax/read_from_file.hpp"
 
 using namespace boost::spirit;
 using namespace boost::spirit::ascii;
@@ -27,8 +27,6 @@ int main(int argc, char* argv[])
         char const*, boost::mpl::vector<std::string>
     > token_type;
 
-    // typedef asn1_tokens<token_type> lexer_type; 
-
     // typedef lexertl::lexer<token_type> lexer_type;
     typedef lexertl::static_lexer<
        token_type, lexertl::static_::lexer_asn1
@@ -37,8 +35,8 @@ int main(int argc, char* argv[])
     // Define the iterator type exposed by the lexer.
     typedef asn1_tokens<lexer_type>::iterator_type iterator_type;
 
-    asn1_tokens<lexer_type> asn1_lex;           // Our lexer
-    asn1_grammar<iterator_type> g (asn1_lex);   // Our parser
+    asn1_tokens<lexer_type> asn1_lex;
+    asn1_grammar<iterator_type> g (asn1_lex);
 
     // Read in the file into memory.
     std::string str (read_from_file(1 == argc ? "data/asn1_comments.input" : argv[1]));
@@ -49,13 +47,13 @@ int main(int argc, char* argv[])
        first, last, asn1_lex, g,
        in_state("WS")[asn1_lex.self],boost::spirit::qi::skip_flag::postskip);
     // boost::spirit::qi::skip_flag::dont_postskip
-    if (r && (first==last)) 
+    if (r && (first==last))
     {    // success
        std::string rest(first, last);
     }
     else {
         std::string rest(first, last);
-        std::cerr << "Parsing failed\n" << "stopped at: \"" 
+        std::cerr << "Parsing failed\n" << "stopped at: \""
                   << rest << "\"\n";
     }
     return 0;
