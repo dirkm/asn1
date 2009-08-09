@@ -16,11 +16,41 @@ struct asn1_grammar : grammar<Iterator>
 {
     template <typename TokenDef>
     asn1_grammar(TokenDef const& tok)
-      : asn1_grammar::base_type(start)
+      : asn1_grammar::base_type(moduleDefinition)
     {
-	start =  *(token(IDANY));
+       moduleDefinition = 
+	  moduleIdentifier >> 				   
+	  token(DEFINITIONS_TOK) >>
+	  token(BEGIN_TOK) >>
+	  moduleBody >>
+	  token(END_TOK);
+ 
+      moduleIdentifier = 
+	 moduleReference >> 
+	 assignedIdentifier;
+ 
+      moduleReference = tok.uppercaseFirst;
+
+      assignedIdentifier = -objectIdComponentList;
+
+      objectIdComponentList = 
+	 token(BEGIN_CURLY_BRACE_TOK) >> 
+	 *objectIdComponent >>
+	 token(END_CURLY_BRACE_TOK); 
+
+      objectIdComponent=    
+	 tok.number
+	 | tok.lowercaseFirst;
+	 // NameAndNumberForm;
+      
+      moduleBody= 
+	 token(BEGIN_CURLY_BRACE_TOK) >> 
+	 token(END_CURLY_BRACE_TOK); 
     }
-    rule<Iterator> start;
+   // typedef in_state_skipper<Lexer> skipper_type;
+
+   rule<Iterator> moduleDefinition,moduleReference,moduleIdentifier,moduleBody;
+   rule<Iterator> assignedIdentifier,objectIdComponentList,objectIdComponent;
 };
 
 #endif

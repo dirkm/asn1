@@ -8,28 +8,40 @@ using namespace boost::spirit::lex;
 
 enum tokenids 
 {
-    IDANY = boost::spirit::lex::min_token_id + 1,
+    DEFINITIONS_TOK = boost::spirit::lex::min_token_id + 1,
+    BEGIN_TOK,
+    END_TOK,
+    BEGIN_CURLY_BRACE_TOK,
+    END_CURLY_BRACE_TOK
 };
 
 template <typename BaseLexer>
 struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer> 
 {
     asn1_tokens()
-    //      : asn1_tokens::base_type(
-    //      boost::spirit::lex::match_flags::match_not_dot_newline)
     {
-        // define tokens and associate them with the lexer
-       // word = "brol";
-       this->self = boost::spirit::lex::token_def<>("dirk", IDANY);
-       // this->self = word;
-        // define the whitespace to ignore (spaces, tabs, newlines and C-style 
-        // comments)
+       uppercaseFirst = "[A-Z][a-zA-Z0-9-]*";
+       lowercaseFirst = "[a-z][a-zA-Z0-9-]*";
+       number = "0|([1-9][0-9]*)";
+
+       this->self = 
+	  boost::spirit::lex::token_def<>("DEFINITIONS", DEFINITIONS_TOK)|
+	  boost::spirit::lex::token_def<>("BEGIN", BEGIN_TOK)|
+	  boost::spirit::lex::token_def<>("END", END_TOK)|
+	  boost::spirit::lex::token_def<>("\\{", BEGIN_CURLY_BRACE_TOK)|
+	  boost::spirit::lex::token_def<>("\\}", END_CURLY_BRACE_TOK)|
+	  number|
+	  uppercaseFirst|
+	  lowercaseFirst;
+
        this->self("WS")
             =   token_def<>("[ \\t\\n]+")
 	    | "--(-[^\\-\\n]|[^\\-\\n])*(--|\\n|-\\n)" 
             ;
     }
-   // boost::spirit::lex::token_def<std::string> word;
+   boost::spirit::lex::token_def<std::string> uppercaseFirst;
+   boost::spirit::lex::token_def<std::string> lowercaseFirst;
+   boost::spirit::lex::token_def<std::string> number;
 };
 
 #endif
