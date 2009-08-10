@@ -11,11 +11,14 @@ enum tokenids
     DEFINITIONS_TOK = boost::spirit::lex::min_token_id + 1,
     IS_DEFINED_AS_TOK,
     COMMA_TOK,
+    SEMICOLON_TOK,
     BEGIN_TOK,
     SEQUENCE_TOK,
     END_TOK,
     BEGIN_CURLY_BRACE_TOK,
-    END_CURLY_BRACE_TOK
+    END_CURLY_BRACE_TOK,
+    EXPORTS_TOK,
+    IMPORTS_TOK
 };
 
 template <typename BaseLexer>
@@ -31,9 +34,12 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("DEFINITIONS", DEFINITIONS_TOK)|
 	  boost::spirit::lex::token_def<>("::=", IS_DEFINED_AS_TOK)|
 	  boost::spirit::lex::token_def<>(",", COMMA_TOK)|
+	  boost::spirit::lex::token_def<>(",", SEMICOLON_TOK)|
 	  boost::spirit::lex::token_def<>("BEGIN", BEGIN_TOK)|
 	  boost::spirit::lex::token_def<>("SEQUENCE", SEQUENCE_TOK)|
 	  boost::spirit::lex::token_def<>("END", END_TOK)|
+	  boost::spirit::lex::token_def<>("EXPORTS", EXPORTS_TOK)|
+	  boost::spirit::lex::token_def<>("IMPORTS", IMPORTS_TOK)|
 	  boost::spirit::lex::token_def<>("\\{", BEGIN_CURLY_BRACE_TOK)|
 	  boost::spirit::lex::token_def<>("\\}", END_CURLY_BRACE_TOK)|
 	  number|

@@ -46,7 +46,8 @@ int main(int argc, char* argv[])
    {    // success
       std::cerr << "keep it real" << std::endl;
    }
-   else {
+   else 
+   {
       std::string rest(first, last);
       std::cerr << "Parsing failed\n" << "stopped at: \""
 		<< rest << "\"\n";

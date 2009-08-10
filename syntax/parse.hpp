@@ -44,15 +44,19 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 	 | tok.lowercaseFirst;
 	 // NameAndNumberForm;
 
-      moduleBody=
-	 // exports
-	 // >> imports
-	 token(BEGIN_CURLY_BRACE_TOK)
-	 >> assignmentList
-	 >> token(END_CURLY_BRACE_TOK);
+      moduleBody= 
+	 (-exports ^ -imports)
+	 >> -assignmentList;
 
+      exports=token(EXPORTS_TOK) >> exportList >> token(SEMICOLON_TOK);
+      imports=token(IMPORTS_TOK) >> importList >> token(SEMICOLON_TOK);
+      
+      exportList=tok.uppercaseFirst >> *(token(COMMA_TOK) >> tok.uppercaseFirst); 
+      importList=tok.uppercaseFirst >> *(token(COMMA_TOK) >> tok.uppercaseFirst); 
+      
       assignmentList=
-	 -(assignment >> *(token(COMMA_TOK) >> assignment)); 
+	 assignment 
+	 >> *(token(COMMA_TOK) >> assignment); 
 
       assignment=token(SEQUENCE_TOK);
 //	 typeAssignment;
@@ -63,10 +67,11 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 
    typedef in_state_skipper<Lexer> skipper_type;
 
-   rule<Iterator,skipper_type> moduleDefinition,moduleReference,moduleIdentifier,moduleBody;
-   rule<Iterator,skipper_type> assignedIdentifier,objectIdComponentList,objectIdComponent;
-   rule<Iterator,skipper_type> exports, imports, assignmentList, assignment;
-   rule<Iterator,skipper_type> typeAssignment, valueAssignment;
+   rule<Iterator,skipper_type> moduleDefinition,moduleReference,moduleIdentifier,moduleBody,
+      assignedIdentifier,objectIdComponentList,objectIdComponent,
+      exports, imports, assignmentList, assignment,
+      exportList, importList,
+      typeAssignment, valueAssignment;
 };
 
 #endif
