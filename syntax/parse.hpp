@@ -51,7 +51,7 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 
       moduleBody=
 	 (exports ^ imports)
-	 >> -assignmentList;
+	 >> assignmentList;
 
       exports=token(EXPORTS_TOK) >> exportList >> token(SEMICOLON_TOK);
       imports=token(IMPORTS_TOK) >> importList >> token(SEMICOLON_TOK);
@@ -60,7 +60,7 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       importList=tok.uppercaseFirst % token(COMMA_TOK);
 
       assignmentList=
-	 assignment % token(COMMA_TOK);
+	 *assignment;
 
       typeAssignment=
 	 tok.uppercaseFirst
@@ -75,13 +75,17 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       sequenceType=
 	 token(SEQUENCE_TOK)
 	 >> token(BEGIN_CURLY_BRACKET_TOK)
-	 >> (elementType % token(COMMA_TOK))
+	 >> ((elementType >> -token(OPTIONAL_TOK)) % token(COMMA_TOK)) 
 	 >> token(END_CURLY_BRACKET_TOK);
 
       sequenceOfType=token(SEQUENCE_OF_TOK);
       setType=token(SET_TOK);
       setOfType=token(SET_OF_TOK);
-      choiceType=token(CHOICE_TOK);
+      choiceType=	 
+	 token(CHOICE_TOK)
+	 >> token(BEGIN_CURLY_BRACKET_TOK)
+	 >> (elementType % token(COMMA_TOK))
+	 >> token(END_CURLY_BRACKET_TOK);
 
       builtinType=
 	 booleanType
@@ -100,14 +104,29 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       // | enumeratedType
       // | realType;
 
-      typeDef=builtinType;
+      typeDef=builtinType | taggedType | namedType;
+      
+      taggedType=
+	 tag 
+	 >> typeDef;
+      
+      valueAssignment =
+	 tok.lowercaseFirst 
+	 >> typeDef 
+	 >> token(IS_DEFINED_AS_TOK)
+	 >> value;
 
+      value=tok.number; // for now
+      
       assignment=
-	 typeAssignment;
-	 // | valueAssignment;
-
+	 typeAssignment
+         | valueAssignment;
+      
       elementType=
-	 tok.uppercaseFirst;
+	 tok.lowercaseFirst
+	 >> typeDef;
+      
+      namedType=tok.uppercaseFirst;
 
       tag=
        	 token(BEGIN_SQUARE_BRACKET_TOK)
@@ -122,17 +141,18 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
     }
 
    typedef in_state_skipper<Lexer> skipper_type;
-
+   
    rule<Iterator,skipper_type> moduleDefinition,moduleReference,moduleIdentifier,moduleBody,
-	    tagDefault,
-	    assignedIdentifier,objectIdComponentList,objectIdComponent,
-	    exports, imports, assignmentList, assignment,
-	    exportList, importList,
-	    typeAssignment, /*valueAssignment,*/
-	    typeDef,builtinType,
-	    booleanType, integerType, bitStringType, nullType, sequenceType, sequenceOfType, setType,
-	    setOfType, choiceType, /*selectionType, taggedType, anyType, objectIdentifierType, enumeratedType, realType */
-	    elementType, tag;
+      tagDefault,
+      assignedIdentifier,objectIdComponentList,objectIdComponent,
+      exports, imports, assignmentList, assignment,
+      exportList, importList,
+      typeAssignment, valueAssignment,
+      typeDef,builtinType,
+      booleanType, integerType, bitStringType, nullType, sequenceType, sequenceOfType, setType,
+      setOfType, choiceType,  taggedType, namedType,
+   /*selectionType, anyType, objectIdentifierType, enumeratedType, realType */
+      elementType, tag, value;
 };
 
 #endif
