@@ -78,9 +78,9 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 	 >> ((elementType >> -token(OPTIONAL_TOK)) % token(COMMA_TOK)) 
 	 >> token(END_CURLY_BRACKET_TOK);
 
-      sequenceOfType=token(SEQUENCE_OF_TOK);
+      sequenceOfType=token(SEQUENCE_TOK);
       setType=token(SET_TOK);
-      setOfType=token(SET_OF_TOK);
+      setOfType=token(SET_TOK);
       choiceType=	 
 	 token(CHOICE_TOK)
 	 >> token(BEGIN_CURLY_BRACKET_TOK)

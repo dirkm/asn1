@@ -30,9 +30,8 @@ enum tokenids
     STRING_TOK,
     OCTET_TOK,
     SEQUENCE_TOK,
-    SEQUENCE_OF_TOK,
+    OF_TOK,
     SET_TOK,
-    SET_OF_TOK,
     CHOICE_TOK,
     ANY_TOK,
     OBJECT_IDENTIFIER_TOK,
@@ -70,9 +69,8 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("STRING", STRING_TOK)|
 	  boost::spirit::lex::token_def<>("OCTET", OCTET_TOK)|
 	  boost::spirit::lex::token_def<>("SEQUENCE", SEQUENCE_TOK)|
-	  boost::spirit::lex::token_def<>("SEQUENCE OF", SEQUENCE_OF_TOK)|
+	  boost::spirit::lex::token_def<>("OF", OF_TOK)|
 	  boost::spirit::lex::token_def<>("SET", SET_TOK)|
-	  boost::spirit::lex::token_def<>("SET_OF", SET_OF_TOK)|
 	  boost::spirit::lex::token_def<>("CHOICE", CHOICE_TOK)|
 	  boost::spirit::lex::token_def<>("ANY", ANY_TOK)|
 	  boost::spirit::lex::token_def<>("OBJECT IDENTIFIER", OBJECT_IDENTIFIER_TOK)|
