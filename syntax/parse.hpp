@@ -132,12 +132,39 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
        	 token(BEGIN_SQUARE_BRACKET_TOK)
 	 >> tok.number
 	 >> token(END_SQUARE_BRACKET_TOK);
-      // selectionType=
-      // taggedType=token
-      // anyType
-      // objectIdentifierType
-      // enumeratedType
-      // realType;
+      
+      sizeConstraint= 
+	 token(SIZE_TOK) 
+	 >> subtypeSpec;
+
+      subtypeSpec= 
+	 token(BEGIN_BRACKET_TOK)
+	 >> (subtypevalueSet % token(BAR_TOK))
+	 >> token(END_BRACKET_TOK); 
+
+      subtypevalueSet=
+	 singleValue
+	 | containedSubtype
+	 | valueRange
+      // | ValueRange
+      // | PermittedAlphabet
+      // | SizeConstraint
+      // | InnerTypeConstraints
+	 ;
+      singleValue=value;
+      
+      containedSubtype=
+	 token(INCLUDES_TOK)
+	 >> type;
+      
+      valueRange=
+	 value
+	 >> -token(LESSTHAN_TOK)
+	 >> token(DOUBLEDOT_TOK)
+	 >> -token(LESSTHAN_TOK)
+	 >> value;
+      
+      type=tok.uppercaseFirst; 
     }
 
    typedef in_state_skipper<Lexer> skipper_type;
@@ -152,7 +179,10 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       booleanType, integerType, bitStringType, nullType, sequenceType, sequenceOfType, setType,
       setOfType, choiceType,  taggedType, namedType,
    /*selectionType, anyType, objectIdentifierType, enumeratedType, realType */
-      elementType, tag, value;
+      elementType, tag, value,
+      sizeConstraint,subtypeSpec,subtypevalueSet,
+      singleValue, containedSubtype,valueRange,
+      type;
 };
 
 #endif

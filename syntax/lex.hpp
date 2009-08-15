@@ -14,6 +14,8 @@ enum tokenids
     SEMICOLON_TOK,
     BEGIN_TOK,
     END_TOK,
+    BEGIN_BRACKET_TOK,
+    END_BRACKET_TOK,
     BEGIN_CURLY_BRACKET_TOK,
     END_CURLY_BRACKET_TOK,
     BEGIN_SQUARE_BRACKET_TOK,
@@ -37,7 +39,12 @@ enum tokenids
     OBJECT_IDENTIFIER_TOK,
     ENUMERATED_TOK,
     REAL_TOK,
-    OPTIONAL_TOK
+    OPTIONAL_TOK,
+    SIZE_TOK,
+    INCLUDES_TOK,
+    BAR_TOK,
+    DOUBLEDOT_TOK,
+    LESSTHAN_TOK
 };
 
 template <typename BaseLexer>
@@ -77,10 +84,17 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("ENUMERATED", ENUMERATED_TOK)|
 	  boost::spirit::lex::token_def<>("REAL", REAL_TOK)|
 	  boost::spirit::lex::token_def<>("OPTIONAL", OPTIONAL_TOK)|
+	  boost::spirit::lex::token_def<>("SIZE", SIZE_TOK)|
+	  boost::spirit::lex::token_def<>("INCLUDES", INCLUDES_TOK)|
+	  boost::spirit::lex::token_def<>("\\(", BEGIN_BRACKET_TOK)|
+	  boost::spirit::lex::token_def<>("\\)", END_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\{", BEGIN_CURLY_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\}", END_CURLY_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\[", BEGIN_SQUARE_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\]", END_SQUARE_BRACKET_TOK)|
+	  boost::spirit::lex::token_def<>("\\|", BAR_TOK)|
+	  boost::spirit::lex::token_def<>("\\.\\.", DOUBLEDOT_TOK)|
+	  boost::spirit::lex::token_def<>("<", LESSTHAN_TOK)|
           number|
 	  uppercaseFirst|
 	  lowercaseFirst;
