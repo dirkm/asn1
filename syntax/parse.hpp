@@ -78,9 +78,20 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 	 >> ((elementType >> -token(OPTIONAL_TOK)) % token(COMMA_TOK)) 
 	 >> token(END_CURLY_BRACKET_TOK);
 
-      sequenceOfType=token(SEQUENCE_TOK);
+      sequenceOfType=
+	 token(SEQUENCE_TOK)
+	 >> -sizeConstraint
+	 >> token(OF_TOK)
+	 >> type;
+
       setType=token(SET_TOK);
-      setOfType=token(SET_TOK);
+
+      setOfType=
+	 token(SET_TOK)
+	 >> -sizeConstraint
+	 >> token(OF_TOK)
+	 >> type;
+
       choiceType=	 
 	 token(CHOICE_TOK)
 	 >> token(BEGIN_CURLY_BRACKET_TOK)
@@ -116,7 +127,8 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 	 >> token(IS_DEFINED_AS_TOK)
 	 >> value;
 
-      value=tok.number; // for now
+      value=
+	 (tok.lowercaseFirst|tok.number); // for now
       
       assignment=
 	 typeAssignment
@@ -143,9 +155,9 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 	 >> token(END_BRACKET_TOK); 
 
       subtypevalueSet=
-	 singleValue
-	 | containedSubtype
+	 containedSubtype
 	 | valueRange
+	 | singleValue
       // | ValueRange
       // | PermittedAlphabet
       // | SizeConstraint
@@ -159,9 +171,9 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       
       valueRange=
 	 value
-	 >> -token(LESSTHAN_TOK)
+	 >> (-token(LESSTHAN_TOK))
 	 >> token(DOUBLEDOT_TOK)
-	 >> -token(LESSTHAN_TOK)
+	 >> (-token(LESSTHAN_TOK))
 	 >> value;
       
       type=tok.uppercaseFirst; 
