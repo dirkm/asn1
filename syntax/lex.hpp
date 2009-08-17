@@ -27,10 +27,7 @@ enum tokenids
     TAGS_TOK,
     BOOLEAN_TOK,
     INTEGER_TOK,
-    BIT_STRING_TOK,
     NULL_TOK,
-    STRING_TOK,
-    OCTET_TOK,
     SEQUENCE_TOK,
     OF_TOK,
     SET_TOK,
@@ -40,6 +37,10 @@ enum tokenids
     ENUMERATED_TOK,
     REAL_TOK,
     OPTIONAL_TOK,
+    DEFAULT_TOK,
+    BIT_TOK,
+    STRING_TOK,
+    OCTET_TOK,
     SIZE_TOK,
     INCLUDES_TOK,
     BAR_TOK,
@@ -71,19 +72,20 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("TAGS", TAGS_TOK)|
 	  boost::spirit::lex::token_def<>("BOOLEAN", BOOLEAN_TOK)|
 	  boost::spirit::lex::token_def<>("INTEGER", INTEGER_TOK)|
-	  boost::spirit::lex::token_def<>("BIT STRING", BIT_STRING_TOK)|
 	  boost::spirit::lex::token_def<>("NULL", NULL_TOK)|
-	  boost::spirit::lex::token_def<>("STRING", STRING_TOK)|
-	  boost::spirit::lex::token_def<>("OCTET", OCTET_TOK)|
 	  boost::spirit::lex::token_def<>("SEQUENCE", SEQUENCE_TOK)|
 	  boost::spirit::lex::token_def<>("OF", OF_TOK)|
 	  boost::spirit::lex::token_def<>("SET", SET_TOK)|
 	  boost::spirit::lex::token_def<>("CHOICE", CHOICE_TOK)|
+	  boost::spirit::lex::token_def<>("BIT", BIT_TOK)|
+	  boost::spirit::lex::token_def<>("OCTET", OCTET_TOK)|
+	  boost::spirit::lex::token_def<>("STRING", STRING_TOK)|
 	  boost::spirit::lex::token_def<>("ANY", ANY_TOK)|
 	  boost::spirit::lex::token_def<>("OBJECT IDENTIFIER", OBJECT_IDENTIFIER_TOK)|
 	  boost::spirit::lex::token_def<>("ENUMERATED", ENUMERATED_TOK)|
 	  boost::spirit::lex::token_def<>("REAL", REAL_TOK)|
 	  boost::spirit::lex::token_def<>("OPTIONAL", OPTIONAL_TOK)|
+	  boost::spirit::lex::token_def<>("DEFAULT", DEFAULT_TOK)|
 	  boost::spirit::lex::token_def<>("SIZE", SIZE_TOK)|
 	  boost::spirit::lex::token_def<>("INCLUDES", INCLUDES_TOK)|
 	  boost::spirit::lex::token_def<>("\\(", BEGIN_BRACKET_TOK)|

@@ -25,7 +25,8 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 	  >> token(IS_DEFINED_AS_TOK)
 	  >> token(BEGIN_TOK)
 	  >> moduleBody
-	  >> token(END_TOK);
+	  >> token(END_TOK)
+	  ;
 
       moduleIdentifier =
 	 moduleReference
@@ -33,7 +34,8 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 
       tagDefault=
 	 -((token(IMPLICIT_TOK)|token(EXPLICIT_TOK))
-	   >> token(TAGS_TOK));
+	   >> token(TAGS_TOK))
+	 ;
 
       moduleReference = tok.uppercaseFirst;
 
@@ -42,16 +44,19 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       objectIdComponentList =
 	 token(BEGIN_CURLY_BRACKET_TOK)
 	 >> *objectIdComponent
-	 >> token(END_CURLY_BRACKET_TOK);
+	 >> token(END_CURLY_BRACKET_TOK)
+	 ;
 
       objectIdComponent=
 	 tok.number
-	 | tok.lowercaseFirst;
+	 | tok.lowercaseFirst
+	 ;
 	 // NameAndNumberForm;
 
       moduleBody=
 	 (exports ^ imports)
-	 >> assignmentList;
+	 >> assignmentList
+	 ;
 
       exports=token(EXPORTS_TOK) >> exportList >> token(SEMICOLON_TOK);
       imports=token(IMPORTS_TOK) >> importList >> token(SEMICOLON_TOK);
@@ -69,20 +74,21 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 
       booleanType=token(BOOLEAN_TOK);
       integerType=token(INTEGER_TOK);
-      bitStringType=token(BIT_STRING_TOK);
       nullType=token(NULL_TOK);
 
       sequenceType=
 	 token(SEQUENCE_TOK)
 	 >> token(BEGIN_CURLY_BRACKET_TOK)
-	 >> ((elementType >> -token(OPTIONAL_TOK)) % token(COMMA_TOK)) 
-	 >> token(END_CURLY_BRACKET_TOK);
+	 >> (elementType % token(COMMA_TOK))
+	 >> token(END_CURLY_BRACKET_TOK)
+	 ;
 
       sequenceOfType=
 	 token(SEQUENCE_TOK)
 	 >> -sizeConstraint
 	 >> token(OF_TOK)
-	 >> type;
+	 >> type
+	 ;
 
       setType=token(SET_TOK);
 
@@ -90,24 +96,28 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 	 token(SET_TOK)
 	 >> -sizeConstraint
 	 >> token(OF_TOK)
-	 >> type;
+	 >> type
+	 ;
 
-      choiceType=	 
+      choiceType=
 	 token(CHOICE_TOK)
 	 >> token(BEGIN_CURLY_BRACKET_TOK)
 	 >> (elementType % token(COMMA_TOK))
-	 >> token(END_CURLY_BRACKET_TOK);
+	 >> token(END_CURLY_BRACKET_TOK)
+	 ;
 
       builtinType=
 	 booleanType
 	 | integerType
-	 | bitStringType
 	 | nullType
 	 | sequenceType
 	 | sequenceOfType
 	 | setType
 	 | setOfType
-	 | choiceType;
+	 | choiceType
+	 | bitString
+	 | octetString
+	 ;
       // | selectionType
       // | taggedType
       // | anyType
@@ -115,72 +125,103 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       // | enumeratedType
       // | realType;
 
-      typeDef=builtinType | taggedType | namedType;
-      
+      bitString=
+	 token(BIT_TOK) >> token(STRING_TOK)
+	 ;
+
+      octetString=
+	 token(OCTET_TOK) >> token(STRING_TOK)
+	 ;
+
+      typeDef=
+	 subType | builtinType | taggedType | namedType;
+	 ;
+
       taggedType=
-	 tag 
-	 >> typeDef;
-      
+	 tag
+	 >> typeDef
+	 ;
+
       valueAssignment =
-	 tok.lowercaseFirst 
-	 >> typeDef 
+	 tok.lowercaseFirst
+	 >> typeDef
 	 >> token(IS_DEFINED_AS_TOK)
-	 >> value;
+	 >> value
+	 ;
 
       value=
-	 (tok.lowercaseFirst|tok.number); // for now
+	 tok.number|tok.lowercaseFirst // for now
+	 ; 
       
       assignment=
-	 typeAssignment
-         | valueAssignment;
-      
+	 typeAssignment | valueAssignment
+	 ;
+
       elementType=
 	 tok.lowercaseFirst
-	 >> typeDef;
-      
-      namedType=tok.uppercaseFirst;
+	 >> typeDef
+	 >> -(token(OPTIONAL_TOK)|token(DEFAULT_TOK)>>value /*namedValue*/)
+	 ;
+
+      namedType=
+	 tok.uppercaseFirst
+	 ;
 
       tag=
        	 token(BEGIN_SQUARE_BRACKET_TOK)
 	 >> tok.number
-	 >> token(END_SQUARE_BRACKET_TOK);
-      
-      sizeConstraint= 
-	 token(SIZE_TOK) 
+	 >> token(END_SQUARE_BRACKET_TOK)
+	 ;
+
+      sizeConstraint=
+	 token(SIZE_TOK)
 	 >> subtypeSpec;
 
-      subtypeSpec= 
+      subtypeSpec=
 	 token(BEGIN_BRACKET_TOK)
 	 >> (subtypevalueSet % token(BAR_TOK))
-	 >> token(END_BRACKET_TOK); 
+	 >> token(END_BRACKET_TOK)
+	 ;
 
       subtypevalueSet=
-	 containedSubtype
+	 sizeConstraint
 	 | valueRange
 	 | singleValue
+	 | containedSubtype;
       // | ValueRange
       // | PermittedAlphabet
       // | SizeConstraint
       // | InnerTypeConstraints
 	 ;
       singleValue=value;
-      
+
       containedSubtype=
 	 token(INCLUDES_TOK)
-	 >> type;
-      
+	 >> type
+	 ;
+
       valueRange=
 	 value
 	 >> (-token(LESSTHAN_TOK))
 	 >> token(DOUBLEDOT_TOK)
 	 >> (-token(LESSTHAN_TOK))
-	 >> value;
+	 >> value
+	 ;
+
+      type=
+	 // simply name of existing type
+	 tok.uppercaseFirst|
+	 builtinType;
+	 ;
       
-      type=tok.uppercaseFirst; 
+      subType=
+	 type 
+	 >> subtypeSpec;
+	 ;
     }
 
    typedef in_state_skipper<Lexer> skipper_type;
-   
+
    rule<Iterator,skipper_type> moduleDefinition,moduleReference,moduleIdentifier,moduleBody,
       tagDefault,
       assignedIdentifier,objectIdComponentList,objectIdComponent,
@@ -188,13 +229,14 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       exportList, importList,
       typeAssignment, valueAssignment,
       typeDef,builtinType,
-      booleanType, integerType, bitStringType, nullType, sequenceType, sequenceOfType, setType,
+      booleanType, integerType, nullType, sequenceType, sequenceOfType, setType,
       setOfType, choiceType,  taggedType, namedType,
+      bitString, octetString,
    /*selectionType, anyType, objectIdentifierType, enumeratedType, realType */
       elementType, tag, value,
       sizeConstraint,subtypeSpec,subtypevalueSet,
       singleValue, containedSubtype,valueRange,
-      type;
+      type,normalType,subType;
 };
 
 #endif
