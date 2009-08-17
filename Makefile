@@ -1,7 +1,7 @@
 OBJS:= syntax/generate_static_lex.o syntax/lex.o syntax/parse.o
 BOOST_INC:=/home/dirk/localbuild/boost-trunk
 #EXTRAFLAGS:= -O2 -g
-EXTRAFLAGS:= -g
+EXTRAFLAGS:= 
 
 #derived variables
 INCLUDES:=-I$(BOOST_INC) -I.
