@@ -22,6 +22,7 @@ enum tokenids
     END_SQUARE_BRACKET_TOK,
     EXPORTS_TOK,
     IMPORTS_TOK,
+    FROM_TOK,
     IMPLICIT_TOK,
     EXPLICIT_TOK,
     UNIVERSAL_TOK,
@@ -36,6 +37,8 @@ enum tokenids
     SET_TOK,
     CHOICE_TOK,
     ANY_TOK,
+    OBJECT_TOK,
+    IDENTIFIER_TOK,
     OBJECT_IDENTIFIER_TOK,
     ENUMERATED_TOK,
     REAL_TOK,
@@ -70,6 +73,7 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("END", END_TOK)|
 	  boost::spirit::lex::token_def<>("EXPORTS", EXPORTS_TOK)|
 	  boost::spirit::lex::token_def<>("IMPORTS", IMPORTS_TOK)|
+	  boost::spirit::lex::token_def<>("FROM", FROM_TOK)|
 	  boost::spirit::lex::token_def<>("IMPLICIT", IMPLICIT_TOK)|
 	  boost::spirit::lex::token_def<>("EXPLICIT", EXPLICIT_TOK)|
 	  boost::spirit::lex::token_def<>("UNIVERSAL", UNIVERSAL_TOK)|
@@ -87,7 +91,8 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("OCTET", OCTET_TOK)|
 	  boost::spirit::lex::token_def<>("STRING", STRING_TOK)|
 	  boost::spirit::lex::token_def<>("ANY", ANY_TOK)|
-	  boost::spirit::lex::token_def<>("OBJECT IDENTIFIER", OBJECT_IDENTIFIER_TOK)|
+	  boost::spirit::lex::token_def<>("OBJECT", OBJECT_TOK)|
+	  boost::spirit::lex::token_def<>("IDENTIFIER", IDENTIFIER_TOK)|
 	  boost::spirit::lex::token_def<>("ENUMERATED", ENUMERATED_TOK)|
 	  boost::spirit::lex::token_def<>("REAL", REAL_TOK)|
 	  boost::spirit::lex::token_def<>("OPTIONAL", OPTIONAL_TOK)|

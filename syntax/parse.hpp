@@ -49,9 +49,8 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 
       objectIdComponent=
 	 tok.number
-	 | tok.lowercaseFirst
+	 | (tok.lowercaseFirst >> -(token(BEGIN_BRACKET_TOK) >> tok.number >> token(END_BRACKET_TOK)))
 	 ;
-	 // NameAndNumberForm;
 
       moduleBody=
 	 (exports ^ imports)
@@ -61,16 +60,24 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       exports=token(EXPORTS_TOK) >> exportList >> token(SEMICOLON_TOK);
       imports=token(IMPORTS_TOK) >> importList >> token(SEMICOLON_TOK);
 
-      exportList=tok.uppercaseFirst % token(COMMA_TOK);
-      importList=tok.uppercaseFirst % token(COMMA_TOK);
+      exportList=(tok.uppercaseFirst % token(COMMA_TOK));
+      importList=+symbolFromModuleList;
+
+      symbolFromModuleList=
+	 (tok.uppercaseFirst % token(COMMA_TOK))
+	 >> token(FROM_TOK)
+	 >> moduleIdentifier
+	 ;
 
       assignmentList=
-	 *assignment;
+	 *assignment
+	 ;
 
       typeAssignment=
 	 tok.uppercaseFirst
 	 >> token(IS_DEFINED_AS_TOK)
-	 >> typeDef;
+	 >> typeDef
+	 ;
 
       booleanType=token(BOOLEAN_TOK);
       integerType=token(INTEGER_TOK);
@@ -117,13 +124,19 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 	 | choiceType
 	 | bitString
 	 | octetString
+	 | objectIdentifier
 	 ;
       // | selectionType
       // | taggedType
       // | anyType
-      // | objectIdentifierType
+      // 
       // | enumeratedType
       // | realType;
+
+      objectIdentifier=
+	 token(OBJECT_TOK) 
+	 >> token(IDENTIFIER_TOK)
+	 ;
 
       bitString=
 	 token(BIT_TOK) >> token(STRING_TOK)
@@ -228,14 +241,15 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 
    rule<Iterator,skipper_type> moduleDefinition,moduleReference,moduleIdentifier,moduleBody,
       tagDefault,
-      assignedIdentifier,objectIdComponentList,objectIdComponent,
+      assignedIdentifier,objectIdComponentList,objectIdComponent,nameAndNumberForm,
       exports, imports, assignmentList, assignment,
-      exportList, importList,
+      exportList, importList,symbolFromModuleList,
       typeAssignment, valueAssignment,
       typeDef,builtinType,
       booleanType, integerType, nullType, sequenceType, sequenceOfType, setType,
       setOfType, choiceType,  taggedType, namedType,
       bitString, octetString,
+      objectIdentifier,
    /*selectionType, anyType, objectIdentifierType, enumeratedType, realType */
       elementType, tag, tagClass, value,
       sizeConstraint,subtypeSpec,subtypevalueSet,
