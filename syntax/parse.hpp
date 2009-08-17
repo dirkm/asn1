@@ -139,6 +139,7 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 
       taggedType=
 	 tag
+	 >> -token(IMPLICIT_TOK)
 	 >> typeDef
 	 ;
 
@@ -169,9 +170,12 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
 
       tag=
        	 token(BEGIN_SQUARE_BRACKET_TOK)
+	 >> tagClass
 	 >> tok.number
 	 >> token(END_SQUARE_BRACKET_TOK)
 	 ;
+
+      tagClass=-(token(UNIVERSAL_TOK)|token(APPLICATION_TOK)|token(PRIVATE_TOK));
 
       sizeConstraint=
 	 token(SIZE_TOK)
@@ -233,7 +237,7 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       setOfType, choiceType,  taggedType, namedType,
       bitString, octetString,
    /*selectionType, anyType, objectIdentifierType, enumeratedType, realType */
-      elementType, tag, value,
+      elementType, tag, tagClass, value,
       sizeConstraint,subtypeSpec,subtypevalueSet,
       singleValue, containedSubtype,valueRange,
       type,normalType,subType;

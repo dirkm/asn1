@@ -24,6 +24,9 @@ enum tokenids
     IMPORTS_TOK,
     IMPLICIT_TOK,
     EXPLICIT_TOK,
+    UNIVERSAL_TOK,
+    APPLICATION_TOK,
+    PRIVATE_TOK,
     TAGS_TOK,
     BOOLEAN_TOK,
     INTEGER_TOK,
@@ -69,6 +72,9 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("IMPORTS", IMPORTS_TOK)|
 	  boost::spirit::lex::token_def<>("IMPLICIT", IMPLICIT_TOK)|
 	  boost::spirit::lex::token_def<>("EXPLICIT", EXPLICIT_TOK)|
+	  boost::spirit::lex::token_def<>("UNIVERSAL", UNIVERSAL_TOK)|
+	  boost::spirit::lex::token_def<>("APPLICATION", APPLICATION_TOK)|
+	  boost::spirit::lex::token_def<>("PRIVATE", PRIVATE_TOK)|
 	  boost::spirit::lex::token_def<>("TAGS", TAGS_TOK)|
 	  boost::spirit::lex::token_def<>("BOOLEAN", BOOLEAN_TOK)|
 	  boost::spirit::lex::token_def<>("INTEGER", INTEGER_TOK)|
