@@ -1,0 +1,152 @@
+----------------------------------------------------------------------
+--
+-- file         sdpgw.asn1
+--              This is the definition of the SCP interface from Siemens
+--
+--              Comments added from the REQ Interface description 
+--              from Andreas Florath
+--
+-- author       Unknown
+-- date         04. Mar 2002
+--
+-- $Id: sdpgw.asn1 57 2002-10-24 16:15:58Z florath $
+--
+-----------------------------------------------------------------------
+
+SDP DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+EXPORTS SDPMsg, ParameterType;
+
+-- Each message consists of a header and a body.  The message header
+-- SDPMsgHeader contains only those information items which are required
+-- for the transport of messages between the LBS and the SCP only.  The
+-- SDPMsgBody specifies the actual message used in the protocol.
+
+-- Message: is header and body
+SDPMsg ::= SEQUENCE {
+        sDPMsgHeader            [0]     SDPMsgHeader,
+        sDPMsgBody              [1]     SDPMsgBody
+}
+
+-- Header
+SDPMsgHeader ::= SEQUENCE {
+        version                 [0]     INTEGER,
+        protocolSubsystem       [1]     INTEGER,
+        sCPHandle               [2]     INTEGER,
+        sDPHandle               [3]     INTEGER,
+        msgClass                [4]     INTEGER,
+        genericError            [5]     ErrorCode,
+        timeStamp               [6]     INTEGER,
+        priority                [7]     Priority
+}
+
+-- Body: one of the 5
+SDPMsgBody ::= CHOICE {
+        sendMsgReq              [0]     SendMsgReq,
+        sendMsgResp             [1]     SendMsgResp,
+        alarm                   [2]     Alarm,
+        sSTReq                  [3]     SSTReq,
+        sSTResp                 [4]     SSTResp
+}
+
+
+-- 1. Message Type: Message Request
+-- This and message 2 can be send and received from either the SCP or LBS.
+SendMsgReq ::= SEQUENCE {
+        msgID                   [0]     MsgID,
+        encodingRule            [1]     EncodingRule,
+        msgParameter            [2]     MsgParameter
+}
+
+-- 2. Message Type: Message Response
+-- The answer to a message request.
+SendMsgResp ::= SEQUENCE {
+        msgID                   [0]     MsgID OPTIONAL,
+        encodingRule            [1]     EncodingRule OPTIONAL,
+        msgParameter            [2]     MsgParameter OPTIONAL,
+        diagnostics             [3]     Diagnostics OPTIONAL
+}
+
+-- 3. Message Type: Alarm
+-- send from LBS to SCP
+Alarm ::= SEQUENCE {
+        alarmID                 [0]     AlarmID,
+        alarmText               [1]     AlarmText OPTIONAL,
+        alarmSeverity           [2]     AlarmSeverity OPTIONAL,
+        alarmStatus             [3]     AlarmStatus OPTIONAL
+}
+
+-- Defines for Message Type 4 and 5
+SubsystemID ::= INTEGER
+maxSubsystemNumber INTEGER ::= 10
+
+-- 4. Message Type: SSTReq
+-- This is a kind of ping - to see if the system is alive.
+-- send from SCP to LBS
+--SSTReq ::= SEQUENCE SIZE (1..maxSubsystemNumber)
+SSTReq ::= SEQUENCE SIZE (maxSubsystemNumber..maxSubsystemNumber)
+        OF SubsystemID
+
+-- 5. Message Type: SSTResp
+-- This is the ping response
+-- send from LBS to SCP
+SSTResp ::= SEQUENCE SIZE (1..maxSubsystemNumber)
+        OF Subsystem
+
+-- Coding of MsgParameter octet string
+-- This type contains the maximum number of twenty parameters
+-- Each is a choice of certain basic ASN.1 types
+-- comprising protocol specific data.
+ParameterType ::= SEQUENCE {
+        parameter01     [0] UniversalType OPTIONAL,
+        parameter02     [1] UniversalType OPTIONAL,
+        parameter03     [2] UniversalType OPTIONAL,
+        parameter04     [3] UniversalType OPTIONAL,
+        parameter05     [4] UniversalType OPTIONAL,
+        parameter06     [5] UniversalType OPTIONAL,
+        parameter07     [6] UniversalType OPTIONAL,
+        parameter08     [7] UniversalType OPTIONAL,
+        parameter09     [8] UniversalType OPTIONAL,
+        parameter10     [9] UniversalType OPTIONAL,
+        parameter11     [10] UniversalType OPTIONAL,
+        parameter12     [11] UniversalType OPTIONAL,
+        parameter13     [12] UniversalType OPTIONAL,
+        parameter14     [13] UniversalType OPTIONAL,
+        parameter15     [14] UniversalType OPTIONAL,
+        parameter16     [15] UniversalType OPTIONAL,
+        parameter17     [16] UniversalType OPTIONAL,
+        parameter18     [17] UniversalType OPTIONAL,
+        parameter19     [18] UniversalType OPTIONAL,
+        parameter20     [19] UniversalType OPTIONAL
+}
+
+-- Universal Type
+UniversalType ::= CHOICE {
+        boolean BOOLEAN,
+        integer INTEGER,
+        octetstring     OCTET STRING,
+        ia5string       IA5String
+}
+
+-- Definition of basic types
+AlarmID ::= INTEGER
+AlarmText ::= IA5String (SIZE (1..255))
+AlarmSeverity ::= INTEGER
+AlarmStatus ::= INTEGER
+Diagnostics ::= OCTET STRING (SIZE (0..255))
+EncodingRule ::= INTEGER
+ErrorCode ::= INTEGER
+EventID ::= INTEGER
+MsgID ::= INTEGER
+MsgParameter ::= OCTET STRING (SIZE (1..1000))
+Priority ::= INTEGER (0..10)
+
+Subsystem ::= SEQUENCE {
+        subsystemID     [0]     SubsystemID,
+        status          [1]     ErrorCode
+}
+
+IA5String ::= [UNIVERSAL 22] IMPLICIT OCTET STRING
+
+END
