@@ -54,7 +54,12 @@ enum tokenids
     DOUBLEDOT_TOK,
     LESSTHAN_TOK,
     TRUE_TOK,
-    FALSE_TOK
+    FALSE_TOK,
+    PRESENT_TOK,
+    ABSENT_TOK,
+    WITH_TOK,
+    COMPONENT_TOK,
+    COMPONENTS_TOK
 };
 
 template <typename BaseLexer>
@@ -104,6 +109,11 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("INCLUDES", INCLUDES_TOK)|
 	  boost::spirit::lex::token_def<>("TRUE", TRUE_TOK)|
 	  boost::spirit::lex::token_def<>("FALSE", FALSE_TOK)|
+	  boost::spirit::lex::token_def<>("WITH", WITH_TOK)|
+	  boost::spirit::lex::token_def<>("COMPONENT", COMPONENT_TOK)|
+	  boost::spirit::lex::token_def<>("COMPONENTS", COMPONENTS_TOK)|
+	  boost::spirit::lex::token_def<>("PRESENT", PRESENT_TOK)|
+	  boost::spirit::lex::token_def<>("ABSENT", ABSENT_TOK)|
 	  boost::spirit::lex::token_def<>("\\(", BEGIN_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\)", END_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\{", BEGIN_CURLY_BRACKET_TOK)|

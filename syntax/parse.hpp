@@ -221,12 +221,11 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       sizeConstraint
       | valueRange
       | singleValue
-      | containedSubtype;
-    // | ValueRange
+      | containedSubtype
     // | PermittedAlphabet
-    // | SizeConstraint
-    // | InnerTypeConstraints
+      | innerTypeConstraints
     ;
+
     singleValue=value;
 
     containedSubtype=
@@ -234,6 +233,36 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
       >> type
       ;
 
+    singleTypeConstraint=subtypeSpec;
+    
+    multipleTypeConstraint=
+      fullSpecification
+      | partialSpecification;
+ 
+    fullSpecification=
+      token(BEGIN_CURLY_BRACKET_TOK)
+      >> (namedConstraint % token(COMMA_TOK))
+      >> token(END_CURLY_BRACKET_TOK)
+      ;
+
+    namedConstraint=(-tok.lowercaseFirst) >> constraint;
+    
+    constraint=
+      (-subtypeSpec)
+      >>(-presenceConstraint)
+      ;
+    
+    presenceConstraint=
+      token(PRESENT_TOK)|
+      token(ABSENT_TOK)|
+      token(OPTIONAL_TOK);
+
+    innerTypeConstraints=
+      token(WITH_TOK) 
+      >>((token(COMPONENT_TOK) >> singleTypeConstraint)
+	 | (token(COMPONENTS_TOK) >> multipleTypeConstraint))
+      ;
+      
     valueRange=
       value
       >> (-token(LESSTHAN_TOK))
@@ -270,7 +299,8 @@ struct asn1_grammar : grammar<Iterator,in_state_skipper<Lexer> >
   /*selectionType, anyType, objectIdentifierType, enumeratedType, realType */
     elementType, tag, tagClass, value,builtinValue,booleanValue,nullValue,oidValue,definedValue,externalValueReference,
     sizeConstraint,subtypeSpec,subtypevalueSet,
-    singleValue, containedSubtype,valueRange,
+    singleValue, containedSubtype,innerTypeConstraints,singleTypeConstraint,multipleTypeConstraint,fullSpecification,
+    partialSpecification,namedConstraint,constraint,presenceConstraint,valueRange,
     type,normalType,subType;
 };
 
