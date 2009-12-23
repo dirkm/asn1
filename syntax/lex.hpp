@@ -50,8 +50,11 @@ enum tokenids
     SIZE_TOK,
     INCLUDES_TOK,
     BAR_TOK,
+    DOT_TOK,
     DOUBLEDOT_TOK,
-    LESSTHAN_TOK
+    LESSTHAN_TOK,
+    TRUE_TOK,
+    FALSE_TOK
 };
 
 template <typename BaseLexer>
@@ -99,6 +102,8 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("DEFAULT", DEFAULT_TOK)|
 	  boost::spirit::lex::token_def<>("SIZE", SIZE_TOK)|
 	  boost::spirit::lex::token_def<>("INCLUDES", INCLUDES_TOK)|
+	  boost::spirit::lex::token_def<>("TRUE", TRUE_TOK)|
+	  boost::spirit::lex::token_def<>("FALSE", FALSE_TOK)|
 	  boost::spirit::lex::token_def<>("\\(", BEGIN_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\)", END_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\{", BEGIN_CURLY_BRACKET_TOK)|
@@ -106,6 +111,7 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  boost::spirit::lex::token_def<>("\\[", BEGIN_SQUARE_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\]", END_SQUARE_BRACKET_TOK)|
 	  boost::spirit::lex::token_def<>("\\|", BAR_TOK)|
+	  boost::spirit::lex::token_def<>("\\.", DOT_TOK)|
 	  boost::spirit::lex::token_def<>("\\.\\.", DOUBLEDOT_TOK)|
 	  boost::spirit::lex::token_def<>("<", LESSTHAN_TOK)|
           number|

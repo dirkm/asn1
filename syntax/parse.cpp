@@ -1,11 +1,11 @@
 #define BOOST_SPIRIT_DEBUG
-// #define BOOST_SPIRIT_LEXERTL_DEBUG
+#define BOOST_SPIRIT_LEXERTL_DEBUG
 
 #define BOOST_VARIANT_MINIMIZE_SIZE
 
 // #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/lex_static_lexertl.hpp>
+// #include <boost/spirit/include/lex_static_lexertl.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_statement.hpp>
 #include <boost/spirit/include/phoenix_container.hpp>
@@ -26,15 +26,15 @@ int main(int argc, char* argv[])
    typedef lexertl::token<
    char const*, boost::mpl::vector<std::string> > token_type;
     
-   // typedef lexertl::lexer<token_type> lexer_type;
-   typedef lexertl::static_lexer< token_type, lexertl::static_::lexer_asn1> lexer_type;
+   typedef lexertl::lexer<token_type> lexer_type;
+   // typedef lexertl::static_lexer< token_type, lexertl::static_::lexer_asn1> lexer_type;
 
    typedef asn1_tokens<lexer_type> asn1_lex_t;
    asn1_lex_t asn1_lex;
    asn1_grammar<asn1_lex_t::iterator_type,asn1_lex_t::lexer_def> g (asn1_lex);
    
    // Read in the file into memory.
-   std::string str (read_from_file(1 == argc ? "data/asn1_comments.input" : argv[1]));
+   std::string str (read_from_file(1 == argc ? "data/full_example.asn1" : argv[1]));
    char const* first = str.c_str();
    char const* last = &first[str.size()];
 
