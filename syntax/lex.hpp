@@ -7,11 +7,10 @@ namespace asn1
 {
   namespace syntax
   {
-
     using namespace boost::spirit;
     using namespace boost::spirit::lex;
 
-    enum tokenids 
+    enum tokenids
       {
 	DEFINITIONS_TOK = boost::spirit::lex::min_token_id + 1,
 	IS_DEFINED_AS_TOK,
@@ -68,7 +67,7 @@ namespace asn1
       };
 
     template <typename BaseLexer>
-    struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer> 
+    struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
     {
       asn1_tokens()
       {
@@ -76,7 +75,7 @@ namespace asn1
 	lowercaseFirst = "[a-z][a-zA-Z0-9-]*";
 	number = "0|([1-9][0-9]*)";
 
-	this->self = 
+	this->self =
 	  boost::spirit::lex::token_def<>("DEFINITIONS", DEFINITIONS_TOK)|
 	  boost::spirit::lex::token_def<>("::=", IS_DEFINED_AS_TOK)|
 	  boost::spirit::lex::token_def<>(",", COMMA_TOK)|
@@ -135,15 +134,14 @@ namespace asn1
 
 	this->self("WS")
 	  =   token_def<>("[ \\t\\n]+")
-	  | "--(-[^\\-\\n]|[^\\-\\n])*(--|\\n|-\\n)" 
+	  | "--(-[^\\-\\n]|[^\\-\\n])*(--|\\n|-\\n)"
 	  ;
       }
       boost::spirit::lex::token_def<std::string> uppercaseFirst;
       boost::spirit::lex::token_def<std::string> lowercaseFirst;
       boost::spirit::lex::token_def<std::string> number;
     };
-
-#endif
-
   }
 }
+
+#endif

@@ -1,6 +1,0 @@
-InventoryList {1 2 0 0 6 1} DEFINITIONS ::=
-BEGIN 
-{
-	SEQUENCE, SEQUENCE  
-}
-END 

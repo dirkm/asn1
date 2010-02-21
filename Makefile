@@ -1,5 +1,10 @@
-OBJS:= syntax/generate_static_lex.o syntax/lex.o syntax/parse.o
-BOOST_INC:=/home/dirk/local/boost-trunk
+OBJS:= syntax/generate_static_lex.o syntax/lex.o
+TEST_OBJS:=test/syntax.o
+
+ALL_OBJS:=$(OBJS) $(TEST_OBJS)
+
+BOOST_INC:=/home/dirk/localbuild/boost-trunk
+#BOOST_LIB:=/home/dirk/local/lib
 #EXTRAFLAGS:= -O2 -g
 EXTRAFLAGS:= 
 
@@ -7,15 +12,15 @@ EXTRAFLAGS:=
 INCLUDES:=-I$(BOOST_INC) -I.
 CPPFLAGS:=$(INCLUDES) $(EXTRAFLAGS)
 
-all: syntax/lex_static.hpp syntax/lex syntax/parse
+all: syntax/lex_static.hpp test/syntax syntax/lex 
 
 clean:
-	rm -f  $(OBJS) $(OBJS:.o=.d) $(PROGRAMS) syntax/lex_static.hpp
+	rm -f  $(ALL_OBJS) $(ALL_OBJS:.o=.d) $(PROGRAMS) syntax/lex_static.hpp
 
-syntax/generate_static_lex:	 syntax/generate_static_lex.o
+syntax/generate_static_lex: syntax/generate_static_lex.o
 	${CXX} $^ -o $@
 
-syntax/parse: syntax/parse.o
+test/syntax: test/syntax.o 
 	${CXX} $^ -o $@
 
 syntax/lex: syntax/lex.o
@@ -24,7 +29,8 @@ syntax/lex: syntax/lex.o
 syntax/lex_static.hpp: syntax/generate_static_lex
 	./$^ $@
 
-syntax/parse.d syntax/lex.d: syntax/lex_static.hpp
+#explicit because lex_static might not exist
+test/syntax.d syntax/lex.d: syntax/lex_static.hpp
 
 %.d: %.cpp
 	$(CXX) -MM $(CPPFLAGS) $< > $@.$$$$ && \
@@ -32,5 +38,5 @@ syntax/parse.d syntax/lex.d: syntax/lex_static.hpp
 	rm -f $@.$$$$
 
 ifneq ($(MAKECMDGOALS),clean)
-sinclude $(OBJS:.o=.d)
+sinclude $(ALL_OBJS:.o=.d)
 endif

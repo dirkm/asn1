@@ -1,10 +1,16 @@
 #ifndef ASN1_PARSE_HPP
 #define ASN1_PARSE_HPP
 
+// #include <boost/config/warning_disable.hpp>
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/lex_static_lexertl.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/phoenix_statement.hpp>
+#include <boost/spirit/include/phoenix_container.hpp>
 #include "syntax/lex_static.hpp"
 #include "syntax/lex.hpp"
 
-#include <boost/spirit/include/qi.hpp>
+//#include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/lex_lexertl.hpp>
 
 namespace asn1
@@ -57,7 +63,7 @@ namespace asn1
 	  ;
 
 	moduleBody=
-	  (exports ^ imports)
+	  -(exports ^ imports)
 	  >> assignmentList
 	  ;
 
@@ -308,7 +314,36 @@ namespace asn1
 	type,normalType,subType;
     };
 
-#endif
+    template<typename Iterator>
+    bool parse(Iterator first,Iterator last)
+    {
+      typedef lexertl::token<Iterator, boost::mpl::vector<std::string> > token_type;
+
+      // typedef lexertl::lexer<token_type> lexer_type;
+      typedef lexertl::static_lexer< token_type, typename lexertl::static_::lexer_asn1> lexer_type;
+      
+      typedef asn1_tokens<lexer_type> asn1_lex_t;
+      asn1_lex_t asn1_lex;
+      asn1_grammar<typename asn1_lex_t::iterator_type,typename asn1_lex_t::lexer_def> g (asn1_lex);
+      
+      bool r = tokenize_and_phrase_parse
+	(first, last, asn1_lex, g,
+	 in_state("WS")[asn1_lex.self],boost::spirit::qi::skip_flag::postskip);
+      // boost::spirit::qi::skip_flag::dont_postskip
+      // if (r && (first==last))
+      // 	{    // success
+      // 	  std::cerr << "keep it real" << std::endl;
+      // 	}
+      // else 
+      // 	{
+      // 	  std::string rest(first, last);
+      // 	  std::cerr << "Parsing failed\n" << "stopped at: \""
+      // 		    << rest << "\"\n";
+      // 	}
+
+      return (r && (first==last));
+    }
 
   }
 }
+#endif
