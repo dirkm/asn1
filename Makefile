@@ -1,5 +1,5 @@
 OBJS:= syntax/generate_static_lex.o 
-TEST_OBJS:=test/syntax.o
+TEST_OBJS:=test/syntax.o test/read_from_file.o
 
 ALL_OBJS:=$(OBJS) $(TEST_OBJS)
 
@@ -19,7 +19,7 @@ clean:
 syntax/generate_static_lex: syntax/generate_static_lex.o
 	${CXX} $^ -o $@
 
-test/syntax: test/syntax.o 
+test/syntax: test/read_from_file.o test/syntax.o 
 	${CXX} $^ -o $@
 
 syntax/lex_static.hpp: syntax/generate_static_lex

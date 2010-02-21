@@ -3,12 +3,11 @@
 
 //#define BOOST_VARIANT_MINIMIZE_SIZE
 
-#include "syntax/parse.hpp"
-#include "syntax/lex.hpp"
 #include <fstream>
 #include <string>
 #define BOOST_TEST_MODULE ASN1Syntax
 #include <boost/test/included/unit_test.hpp>
+#include "syntax/parse_fwd.hpp"
 
 std::string
 read_from_file(const char* f)
