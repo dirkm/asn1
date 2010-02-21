@@ -3,75 +3,80 @@
 
 #include <boost/spirit/include/lex_lexertl.hpp>
 
-using namespace boost::spirit;
-using namespace boost::spirit::lex;
-
-enum tokenids 
+namespace asn1
 {
-    DEFINITIONS_TOK = boost::spirit::lex::min_token_id + 1,
-    IS_DEFINED_AS_TOK,
-    COMMA_TOK,
-    SEMICOLON_TOK,
-    BEGIN_TOK,
-    END_TOK,
-    BEGIN_BRACKET_TOK,
-    END_BRACKET_TOK,
-    BEGIN_CURLY_BRACKET_TOK,
-    END_CURLY_BRACKET_TOK,
-    BEGIN_SQUARE_BRACKET_TOK,
-    END_SQUARE_BRACKET_TOK,
-    EXPORTS_TOK,
-    IMPORTS_TOK,
-    FROM_TOK,
-    IMPLICIT_TOK,
-    EXPLICIT_TOK,
-    UNIVERSAL_TOK,
-    APPLICATION_TOK,
-    PRIVATE_TOK,
-    TAGS_TOK,
-    BOOLEAN_TOK,
-    INTEGER_TOK,
-    NULL_TOK,
-    SEQUENCE_TOK,
-    OF_TOK,
-    SET_TOK,
-    CHOICE_TOK,
-    ANY_TOK,
-    OBJECT_TOK,
-    IDENTIFIER_TOK,
-    OBJECT_IDENTIFIER_TOK,
-    ENUMERATED_TOK,
-    REAL_TOK,
-    OPTIONAL_TOK,
-    DEFAULT_TOK,
-    BIT_TOK,
-    STRING_TOK,
-    OCTET_TOK,
-    SIZE_TOK,
-    INCLUDES_TOK,
-    BAR_TOK,
-    DOT_TOK,
-    DOUBLEDOT_TOK,
-    LESSTHAN_TOK,
-    TRUE_TOK,
-    FALSE_TOK,
-    PRESENT_TOK,
-    ABSENT_TOK,
-    WITH_TOK,
-    COMPONENT_TOK,
-    COMPONENTS_TOK
-};
+  namespace syntax
+  {
 
-template <typename BaseLexer>
-struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer> 
-{
-    asn1_tokens()
+    using namespace boost::spirit;
+    using namespace boost::spirit::lex;
+
+    enum tokenids 
+      {
+	DEFINITIONS_TOK = boost::spirit::lex::min_token_id + 1,
+	IS_DEFINED_AS_TOK,
+	COMMA_TOK,
+	SEMICOLON_TOK,
+	BEGIN_TOK,
+	END_TOK,
+	BEGIN_BRACKET_TOK,
+	END_BRACKET_TOK,
+	BEGIN_CURLY_BRACKET_TOK,
+	END_CURLY_BRACKET_TOK,
+	BEGIN_SQUARE_BRACKET_TOK,
+	END_SQUARE_BRACKET_TOK,
+	EXPORTS_TOK,
+	IMPORTS_TOK,
+	FROM_TOK,
+	IMPLICIT_TOK,
+	EXPLICIT_TOK,
+	UNIVERSAL_TOK,
+	APPLICATION_TOK,
+	PRIVATE_TOK,
+	TAGS_TOK,
+	BOOLEAN_TOK,
+	INTEGER_TOK,
+	NULL_TOK,
+	SEQUENCE_TOK,
+	OF_TOK,
+	SET_TOK,
+	CHOICE_TOK,
+	ANY_TOK,
+	OBJECT_TOK,
+	IDENTIFIER_TOK,
+	OBJECT_IDENTIFIER_TOK,
+	ENUMERATED_TOK,
+	REAL_TOK,
+	OPTIONAL_TOK,
+	DEFAULT_TOK,
+	BIT_TOK,
+	STRING_TOK,
+	OCTET_TOK,
+	SIZE_TOK,
+	INCLUDES_TOK,
+	BAR_TOK,
+	DOT_TOK,
+	DOUBLEDOT_TOK,
+	LESSTHAN_TOK,
+	TRUE_TOK,
+	FALSE_TOK,
+	PRESENT_TOK,
+	ABSENT_TOK,
+	WITH_TOK,
+	COMPONENT_TOK,
+	COMPONENTS_TOK
+      };
+
+    template <typename BaseLexer>
+    struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer> 
     {
-       uppercaseFirst = "[A-Z][a-zA-Z0-9-]*";
-       lowercaseFirst = "[a-z][a-zA-Z0-9-]*";
-       number = "0|([1-9][0-9]*)";
+      asn1_tokens()
+      {
+	uppercaseFirst = "[A-Z][a-zA-Z0-9-]*";
+	lowercaseFirst = "[a-z][a-zA-Z0-9-]*";
+	number = "0|([1-9][0-9]*)";
 
-       this->self = 
+	this->self = 
 	  boost::spirit::lex::token_def<>("DEFINITIONS", DEFINITIONS_TOK)|
 	  boost::spirit::lex::token_def<>("::=", IS_DEFINED_AS_TOK)|
 	  boost::spirit::lex::token_def<>(",", COMMA_TOK)|
@@ -128,14 +133,17 @@ struct asn1_tokens: boost::spirit::lex::lexer<BaseLexer>
 	  uppercaseFirst|
 	  lowercaseFirst;
 
-       this->self("WS")
-            =   token_def<>("[ \\t\\n]+")
-	    | "--(-[^\\-\\n]|[^\\-\\n])*(--|\\n|-\\n)" 
-            ;
-    }
-   boost::spirit::lex::token_def<std::string> uppercaseFirst;
-   boost::spirit::lex::token_def<std::string> lowercaseFirst;
-   boost::spirit::lex::token_def<std::string> number;
-};
+	this->self("WS")
+	  =   token_def<>("[ \\t\\n]+")
+	  | "--(-[^\\-\\n]|[^\\-\\n])*(--|\\n|-\\n)" 
+	  ;
+      }
+      boost::spirit::lex::token_def<std::string> uppercaseFirst;
+      boost::spirit::lex::token_def<std::string> lowercaseFirst;
+      boost::spirit::lex::token_def<std::string> number;
+    };
 
 #endif
+
+  }
+}
