@@ -10,7 +10,6 @@ namespace asn1
 {
   namespace test
   {
-
     std::string
     read_from_file(const char* f)
     {

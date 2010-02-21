@@ -19,34 +19,43 @@ read_from_file(const char* f)
 		     std::istreambuf_iterator<char>());
 }
 
-// template<typename Iterator>
-// bool lex(Iterator first,Iterator last)
-// {
-//   using namespace asn1::syntax;
-//   typedef lexertl::token<Iterator> token_type;
+const char simple_module_prefix[]=
+  "TEST DEFINITIONS IMPLICIT TAGS ::=\n"
+  "BEGIN\n";
 
-//   typedef lexertl::actor_lexer<token_type> lexer_type;
+const char simple_module_suffix[]=
+  "END\n";
 
-//   asn1_tokens<lexer_type> asn1_lexer;
+std::string
+pack_request(const char* p)
+{
+  std::string r(simple_module_prefix);
+  r.append(p);
+  r.append(simple_module_suffix);
+  return r;
+}
 
-//   typename lexer_type::iterator_type iter = asn1_lexer.begin(first, last);
-//   typename lexer_type::iterator_type end = asn1_lexer.end();
-//   std::cout << token_is_valid(*iter) << std::endl;
-//   while ((iter != end) && token_is_valid(*iter))
-//     {
-//       std::cout << " " << iter->value() <<  std::endl;
-//       ++iter;
-//       std::cout << token_is_valid(*iter) << std::endl;
-//     }
+BOOST_AUTO_TEST_CASE(parse_single_line_comments)
+{
+  const std::string& s=pack_request
+    ("-- test\n"
+     "-- test2\n");
+  BOOST_CHECK(asn1::syntax::parse(s.begin(),s.end()));
+}
 
-//   return (iter == end);
-// }
+BOOST_AUTO_TEST_CASE(parse_partial_line_comments)
+{
+  const std::string& s=pack_request
+    ("-- test -- \n");
+  BOOST_CHECK(asn1::syntax::parse(s.begin(),s.end()));
+}
 
-// BOOST_AUTO_TEST_CASE(parse_no_comments)
-// {
-//   const std::string& s=read_from_file("syntax_data/no_comments.asn1");
-//   BOOST_CHECK(lex(s.begin(),s.end()));
-// }
+BOOST_AUTO_TEST_CASE(wrong_comment)
+{
+  const std::string& s=pack_request
+    ("- test -- \n");
+  BOOST_CHECK(!asn1::syntax::parse(s.begin(),s.end()));
+}
 
 BOOST_AUTO_TEST_CASE(parse_full_example)
 {
@@ -66,20 +75,3 @@ BOOST_AUTO_TEST_CASE(parse_sdhpm)
   BOOST_CHECK(asn1::syntax::parse(s.begin(),s.end()));
 }
 
-BOOST_AUTO_TEST_CASE(parse_single_line_comments)
-{
-  const std::string& s=read_from_file("syntax_data/single_line_comments.asn1");
-  BOOST_CHECK(asn1::syntax::parse(s.begin(),s.end()));
-}
-
-BOOST_AUTO_TEST_CASE(parse_partial_line_comments)
-{
-  const std::string& s=read_from_file("syntax_data/partial_line_comments.asn1");
-  BOOST_CHECK(asn1::syntax::parse(s.begin(),s.end()));
-}
-
-BOOST_AUTO_TEST_CASE(wrong_comment)
-{
-  const std::string& s=read_from_file("syntax_data/wrong_comment.asn1");
-  BOOST_CHECK(!asn1::syntax::parse(s.begin(),s.end()));
-}
