@@ -1,4 +1,4 @@
-OBJS:= syntax/generate_static_lex.o syntax/lex.o
+OBJS:= syntax/generate_static_lex.o 
 TEST_OBJS:=test/syntax.o
 
 ALL_OBJS:=$(OBJS) $(TEST_OBJS)
@@ -12,8 +12,7 @@ EXTRAFLAGS:=
 INCLUDES:=-I$(BOOST_INC) -I.
 CPPFLAGS:=$(INCLUDES) $(EXTRAFLAGS)
 
-all: syntax/lex_static.hpp test/syntax syntax/lex 
-
+all: syntax/lex_static.hpp test/syntax
 clean:
 	rm -f  $(ALL_OBJS) $(ALL_OBJS:.o=.d) $(PROGRAMS) syntax/lex_static.hpp
 
@@ -21,9 +20,6 @@ syntax/generate_static_lex: syntax/generate_static_lex.o
 	${CXX} $^ -o $@
 
 test/syntax: test/syntax.o 
-	${CXX} $^ -o $@
-
-syntax/lex: syntax/lex.o
 	${CXX} $^ -o $@
 
 syntax/lex_static.hpp: syntax/generate_static_lex
