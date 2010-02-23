@@ -8,16 +8,7 @@
 #define BOOST_TEST_MODULE ASN1Syntax
 #include <boost/test/included/unit_test.hpp>
 #include "syntax/parse_fwd.hpp"
-
-std::string
-read_from_file(const char* f)
-{
-  std::ifstream instream(f);
-  BOOST_REQUIRE(instream.is_open());  
-  instream.unsetf(std::ios::skipws); // No white space skipping!
-  return std::string(std::istreambuf_iterator<char>(instream.rdbuf()),
-		     std::istreambuf_iterator<char>());
-}
+#include "test/read_from_file.hpp"
 
 const char simple_module_prefix[]=
   "TEST DEFINITIONS IMPLICIT TAGS ::=\n"
@@ -34,6 +25,8 @@ pack_request(const char* p)
   r.append(simple_module_suffix);
   return r;
 }
+
+using namespace asn1::test;
 
 BOOST_AUTO_TEST_CASE(parse_single_line_comments)
 {

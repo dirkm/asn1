@@ -1,5 +1,5 @@
-#ifndef ASN1_PARSE_HPP
-#define ASN1_PARSE_HPP
+#ifndef ASN1_SYNTAX_PARSE_HPP
+#define ASN1_SYNTAX_PARSE_HPP
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/lex_static_lexertl.hpp>

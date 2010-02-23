@@ -1,3 +1,6 @@
+#ifndef ASN1_CODEC_TAG_HPP
+#define ASN1_CODEC_TAG_HPP
+
 namespace asn1
 {
   namespace codec
@@ -5,16 +8,16 @@ namespace asn1
     class tag
     {
     public:
-      typedef unsigned long tagtype;
+      typedef unsigned long tag_type;
       static const uint8_t class_bitmask=0xC0;
       static const uint8_t format_bitmask=0x20;
-      static const uint8_t tagid_bitmask=~(class_mask|format_mask); // 0x1F
+      static const uint8_t tagid_bitmask=~(class_bitmask|format_bitmask); // 0x1F
     private:
-      static const unsigned int shift_classformat=(sizeof(tagtype)-1)*8;
-      static const tagtype id_mask=~(((tagtype)0xFF)<<shift_classformat);
+      static const unsigned int shift_classformat=(sizeof(tag_type)-1)*8;
+      static const tag_type id_mask=~(((tag_type)0xFF)<<shift_classformat);
     public:
-      tag(uint8_t class_type, uint8_t format, tagtype id):
-	v(((classtype|format)<<id_mask)+id)
+      tag(uint8_t class_type, uint8_t format, tag_type id):
+         v((((tag_type)(class_type|format))<<shift_classformat)|id)
       {
       };
 
@@ -28,7 +31,7 @@ namespace asn1
 	return ((v>>shift_classformat) & format_bitmask);
       };
 
-      tag::tagtype get_id() const
+      tag::tag_type get_id() const
       {
 	return v & id_mask;
       };
@@ -37,7 +40,7 @@ namespace asn1
       void decode(InIt& it, InIt itend)
       {
 	uint8_t b=*it;
-	v=(b&(class_bitmask|format_bitmask))<<shift_classformat;
+	v=((tag_type)(b&(class_bitmask|format_bitmask)))<<shift_classformat;
 	if((b&tagid_bitmask)!=tagid_bitmask)
 	  {
 	    // single byte representation
@@ -46,19 +49,21 @@ namespace asn1
 	else
 	  {
 	    // multiple byte representation
-	    tagtype tagid=0;
+	    tag_type tag_id=0;
 	    b=*(++it);
-	    while(b&'\80')
+	    while(b&'\x80')
 	      {
-		tagid<<=8;
-		tagid|=b;
+		tag_id<<=8;
+		tag_id|=b;
 		b=*(++it);
 	      }
-	    v|=tagid;
+	    v|=tag_id;
 	  }
       };
     private:
-      tagtype v;
+      tag_type v;
     };
   }
 }
+
+#endif

@@ -1,5 +1,5 @@
-#ifndef ASN1_LEX_HPP
-#define ASN1_LEX_HPP
+#ifndef ASN1_SYNTAX_LEX_HPP
+#define ASN1_SYNTAX_LEX_HPP
 
 #include <boost/spirit/include/lex_lexertl.hpp>
 

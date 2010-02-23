@@ -1,5 +1,5 @@
 #ifndef ASN1_TEST_READ_FROM_FILE
-#define
+#define ASN1_TEST_READ_FROM_FILE
 
 namespace asn1
 {
@@ -8,14 +8,8 @@ namespace asn1
 
     extern
     std::string
-    read_from_file(const char* f)
-    {
-      std::ifstream instream(f);
-      BOOST_REQUIRE(instream.is_open());  
-      instream.unsetf(std::ios::skipws); // No white space skipping!
-      return std::string(std::istreambuf_iterator<char>(instream.rdbuf()),
-			 std::istreambuf_iterator<char>());
-    }
+    read_from_file(const char* f);
   }
 }
+
 #endif
