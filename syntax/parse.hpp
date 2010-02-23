@@ -144,14 +144,9 @@ namespace asn1
 	// | selectionType
 	// | taggedType
 	// | anyType
-	// 
+	//
 	// | enumeratedType
 	// | realType;
-
-	objectIdentifier=
-	  token(OBJECT_TOK) 
-	  >> token(IDENTIFIER_TOK)
-	  ;
 
 	bitString=
 	  token(BIT_TOK) >> token(STRING_TOK)
@@ -161,10 +156,15 @@ namespace asn1
 	  token(OCTET_TOK) >> token(STRING_TOK)
 	  ;
 
+	objectIdentifier=
+	  token(OBJECT_TOK)
+	  >> token(IDENTIFIER_TOK)
+	  ;
+
 	typeDef=
-	  subType | 
-	  builtinType | 
-	  taggedType | 
+	  subType |
+	  builtinType |
+	  taggedType |
 	  namedType
 	  ;
 
@@ -184,13 +184,13 @@ namespace asn1
 	booleanValue = token(TRUE_TOK)|token(FALSE_TOK);
 	nullValue = token(NULL_TOK);
 	oidValue = objectIdComponentList;
-    
+
 	builtinValue = tok.number|booleanValue|nullValue|oidValue;
 
 	externalValueReference= moduleReference >> token(DOT_TOK) >> tok.lowercaseFirst;
 
 	definedValue= externalValueReference| tok.lowercaseFirst;
-	
+
 	value=
 	  builtinValue| definedValue;
 
@@ -244,11 +244,11 @@ namespace asn1
 	  ;
 
 	singleTypeConstraint=subtypeSpec;
-    
+
 	multipleTypeConstraint=
-	  fullSpecification
-	  | partialSpecification;
- 
+           fullSpecification;
+        // | partialSpecification;
+
 	fullSpecification=
 	  token(BEGIN_CURLY_BRACKET_TOK)
 	  >> (namedConstraint % token(COMMA_TOK))
@@ -256,23 +256,23 @@ namespace asn1
 	  ;
 
 	namedConstraint=(-tok.lowercaseFirst) >> constraint;
-    
+
 	constraint=
 	  (-subtypeSpec)
 	  >>(-presenceConstraint)
 	  ;
-    
+
 	presenceConstraint=
 	  token(PRESENT_TOK)|
 	  token(ABSENT_TOK)|
 	  token(OPTIONAL_TOK);
 
 	innerTypeConstraints=
-	  token(WITH_TOK) 
+	  token(WITH_TOK)
 	  >>((token(COMPONENT_TOK) >> singleTypeConstraint)
 	     | (token(COMPONENTS_TOK) >> multipleTypeConstraint))
 	  ;
-      
+
 	valueRange=
 	  value
 	  >> (-token(LESSTHAN_TOK))
@@ -286,32 +286,53 @@ namespace asn1
 	  // simply name of existing type
 	  tok.uppercaseFirst;
 	;
-      
+
 	subType=
-	  type 
+	  type
 	  >> subtypeSpec;
 	;
       }
 
       typedef in_state_skipper<Lexer> skipper_type;
 
-      rule<Iterator,skipper_type> moduleDefinition,moduleReference,moduleIdentifier,moduleBody,
-	tagDefault,
-	assignedIdentifier,objectIdComponentList,objectIdComponent,nameAndNumberForm,
-	exports, imports, assignmentList, assignment,
-	exportList, importList,symbolFromModuleList,
-	typeAssignment, valueAssignment,
-	typeDef,builtinType,
-	booleanType, integerType, nullType, sequenceType, sequenceOfType, setType,
-	setOfType, choiceType,  taggedType, namedType,
-	bitString, octetString,
-	objectIdentifier,
+      rule<Iterator,skipper_type> moduleDefinition,
+         moduleIdentifier,tagDefault,
+         moduleReference,
+         assignedIdentifier,
+         objectIdComponentList,
+         moduleBody,
+         exports, imports,
+         exportList, importList,
+         symbolFromModuleList,
+         assignmentList,
+         typeAssignment,
+         booleanType, integerType, nullType, sequenceType,
+         sequenceOfType, setType,
+         setOfType, choiceType,
+         builtinType,
+         bitString, octetString, objectIdentifier,
+         typeDef,
+         taggedType,
+	 valueAssignment,
+         booleanValue,nullValue,oidValue,
+         builtinValue,
+         externalValueReference,definedValue,
+         value,
+         assignment,
+         objectIdComponent,
+         nameAndNumberForm,
+         elementType,namedType,
+         tag,tagClass,
+         sizeConstraint,subtypeSpec,subtypevalueSet,
+         singleValue,
       /*selectionType, anyType, objectIdentifierType, enumeratedType, realType */
-	elementType, tag, tagClass, value,builtinValue,booleanValue,nullValue,oidValue,definedValue,externalValueReference,
-	sizeConstraint,subtypeSpec,subtypevalueSet,
-	singleValue, containedSubtype,innerTypeConstraints,singleTypeConstraint,multipleTypeConstraint,fullSpecification,
-	partialSpecification,namedConstraint,constraint,presenceConstraint,valueRange,
-	type,normalType,subType;
+         containedSubtype,
+         singleTypeConstraint,multipleTypeConstraint,
+         fullSpecification,
+      /* partialSpecification, */
+         namedConstraint,constraint,
+         presenceConstraint,innerTypeConstraints,
+         valueRange,type,subType;
     };
 
     template<typename Iterator>
@@ -321,11 +342,11 @@ namespace asn1
 
       // typedef lexertl::lexer<token_type> lexer_type;
       typedef lexertl::static_lexer< token_type, typename lexertl::static_::lexer_asn1> lexer_type;
-      
+
       typedef asn1_tokens<lexer_type> asn1_lex_t;
       asn1_lex_t asn1_lex;
       asn1_grammar<typename asn1_lex_t::iterator_type,typename asn1_lex_t::lexer_def> g (asn1_lex);
-      
+
       bool r = tokenize_and_phrase_parse
 	(first, last, asn1_lex, g,
 	 in_state("WS")[asn1_lex.self],boost::spirit::qi::skip_flag::postskip);
@@ -334,7 +355,7 @@ namespace asn1
       // 	{    // success
       // 	  std::cerr << "keep it real" << std::endl;
       // 	}
-      // else 
+      // else
       // 	{
       // 	  std::string rest(first, last);
       // 	  std::cerr << "Parsing failed\n" << "stopped at: \""
