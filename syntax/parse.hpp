@@ -1,17 +1,15 @@
 #ifndef ASN1_PARSE_HPP
 #define ASN1_PARSE_HPP
 
-// #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/lex_static_lexertl.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_statement.hpp>
 #include <boost/spirit/include/phoenix_container.hpp>
+#include <boost/spirit/include/lex_lexertl.hpp>
+
 #include "syntax/lex_static.hpp"
 #include "syntax/lex.hpp"
-
-//#include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/lex_lexertl.hpp>
 
 namespace asn1
 {
