@@ -181,7 +181,7 @@ namespace asn1
 
 	booleanValue = token(TRUE_TOK)|token(FALSE_TOK);
 	nullValue = token(NULL_TOK);
-	oidValue = objectIdComponentList;
+	oidValue = objectIdComponentList.alias();
 
 	builtinValue = tok.number|booleanValue|nullValue|oidValue;
 

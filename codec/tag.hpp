@@ -1,6 +1,8 @@
 #ifndef ASN1_CODEC_TAG_HPP
 #define ASN1_CODEC_TAG_HPP
 
+#include "codec/tagtypes.hpp"
+
 namespace asn1
 {
    namespace codec
@@ -21,14 +23,14 @@ namespace asn1
          {
          };
 
-         uint8_t get_class() const // shifted
+         tagClass get_class() const // shifted
          {
-            return ((v>>shift_classformat) & class_bitmask);
+            return static_cast<tagClass>((v>>shift_classformat) & class_bitmask);
          };
 
-         uint8_t get_format() const // shifted
+         tagFormat get_format() const // shifted
          {
-            return ((v>>shift_classformat) & format_bitmask);
+            return static_cast<tagFormat>((v>>shift_classformat) & format_bitmask);
          };
 
          tag::tag_type get_id() const
@@ -37,14 +39,15 @@ namespace asn1
          };
     
          template<typename InIt>
-         void decode(InIt& it)
+         static tag decode(InIt& it)
          {
+            tag t;
             uint8_t b=*(it++);
-            v=((tag_type)(b&(class_bitmask|format_bitmask)))<<shift_classformat;
+            t.v=((tag_type)(b&(class_bitmask|format_bitmask)))<<shift_classformat;
             if((b&tagid_bitmask)!=tagid_bitmask)
             {
                // single byte representation
-               v|=b&tagid_bitmask;
+               t.v|=b&tagid_bitmask;
             }
             else
             {
@@ -52,16 +55,20 @@ namespace asn1
                tag_type tag_id=0;
                do
                {
-                  b=*(it++)&tag_type(0xFF);
+                  b=*(it++);
                   tag_id<<=7;
-                  tag_id|=b;
+                  tag_id|=(b&tag_type(0x7F));
                }
                while(b&'\x80');
           
-               v|=tag_id;
+               t.v|=tag_id;
             }
          };
       private:
+         tag()
+         {
+         }
+
          tag_type v;
       };
    }
