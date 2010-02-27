@@ -8,22 +8,51 @@ namespace asn1
     class length
     {
     public:
-       typedef unsigned long length_type;
-       
+       typedef std::size_t length_type;
+
        length(length_type l):
           v(l)
        {
-       };
+       }
 
        template<typename InIt>
-       void decode(InIt& it, InIt itend)
+       static length decode(InIt& it)
        {
-       };
+          length l;
+          const uint8_t b=*(it++);
+          const uint8_t len=b&'\x7F';
+          if(len==b) // most significant bit set
+          {
+             l.v=b;
+          }
+          else if (b=='\x80')
+          {
+             assert(false); // don't know
+          }
+          else
+          {
+             l.v=0;
+             for(uint8_t i=0;i<len;++i)
+             {
+                l.v<<=8;
+                l.v|=(*(it++))&length_type(0xFF);
+             }
+          }
+          return l;
+       }
+
+       length_type get_value() const
+       {
+          return v;
+       }
     private:
+       length()
+       {
+       }
+
        length_type v;
     };
   }
 }
 
 #endif
-

@@ -6,13 +6,14 @@ ALL_OBJS:=$(OBJS) $(TEST_OBJS)
 BOOST_INC:=/home/dirk/localbuild/boost-trunk
 #BOOST_LIB:=/home/dirk/local/lib
 #EXTRAFLAGS:= -O2 -g
-EXTRAFLAGS:= 
+EXTRAFLAGS:= -g
 
 #derived variables
 INCLUDES:=-I$(BOOST_INC) -I.
 CPPFLAGS:=$(INCLUDES) $(EXTRAFLAGS)
 
 all: syntax/lex_static.hpp test/syntax test/codec
+
 clean:
 	rm -f  $(ALL_OBJS) $(ALL_OBJS:.o=.d) $(PROGRAMS) syntax/lex_static.hpp
 

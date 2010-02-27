@@ -244,7 +244,7 @@ namespace asn1
 	singleTypeConstraint=subtypeSpec;
 
 	multipleTypeConstraint=
-           fullSpecification;
+           fullSpecification.alias();
         // | partialSpecification;
 
 	fullSpecification=

@@ -52,11 +52,12 @@ namespace asn1
                tag_type tag_id=0;
                do
                {
-                  b=*(it++);
+                  b=*(it++)&tag_type(0xFF);
                   tag_id<<=7;
                   tag_id|=b;
                }
                while(b&'\x80');
+          
                v|=tag_id;
             }
          };
