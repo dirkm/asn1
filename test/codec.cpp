@@ -6,6 +6,7 @@
 #include "codec/length.hpp"
 #include "codec/tag.hpp"
 #include "codec/tagtypes.hpp"
+#include "codec/tlv_iterator.hpp"
 
 BOOST_AUTO_TEST_CASE(single_byte_length)
 {
@@ -65,4 +66,22 @@ BOOST_AUTO_TEST_CASE(multi_byte_tag)
    BOOST_CHECK(t.get_class()==asn1::codec::class_universal);
    BOOST_CHECK(t.get_format()==asn1::codec::format_simple);
    BOOST_CHECK(t.get_id()==0x4891);
+}
+
+typedef asn1::codec::tlv_iterator<const char*> tlv_array_type;
+
+BOOST_AUTO_TEST_CASE(single_step_iterator_tag)
+{
+   const char single_tlv[]={'\x1F','\x24','\x04','\x01','\x02','\x03','\x04'};
+   const char* it=single_tlv;
+   tlv_array_type tlv_it(it);
+   // see test two_byte_tag
+   const asn1::codec::tag& t=tlv_it->tag;
+   const tlv_array_type::value_type::value_boundaries& v=tlv_it->value;
+   BOOST_CHECK(t.get_class()==asn1::codec::class_universal);
+   BOOST_CHECK(t.get_format()==asn1::codec::format_simple);
+   BOOST_CHECK(t.get_id()==0x24);
+   BOOST_CHECK(v.second==(v.first+4));
+   BOOST_CHECK(std::equal(v.first,v.second,single_tlv+3));
+   BOOST_CHECK(tlv_it.get_base_iterator()==single_tlv+7);
 }

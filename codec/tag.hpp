@@ -64,11 +64,11 @@ namespace asn1
                t.v|=tag_id;
             }
          };
-      private:
+
          tag()
          {
          }
-
+      private:
          tag_type v;
       };
    }
