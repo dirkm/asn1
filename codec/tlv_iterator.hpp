@@ -21,51 +21,43 @@ namespace asn1
       template <class BaseIt>
       class tlv_iterator: public boost::iterator_adaptor<
          tlv_iterator<BaseIt>, // Derived
-         BaseIt, // Base
+         BaseIt, 
          tag_value<BaseIt>, // Value
-         boost::forward_traversal_tag>
+         boost::single_pass_traversal_tag,
+         tag_value<BaseIt> // Reference
+         >
       {
-      private:
-         typedef boost::iterator_adaptor<tlv_iterator<BaseIt>,
-                                         BaseIt, tag_value<BaseIt>,
-                                         boost::forward_traversal_tag> super_type;
       public:
-         explicit tlv_iterator(BaseIt& baseit)
-            : super_type(baseit)
+         explicit tlv_iterator(BaseIt& it)
+            : tlv_iterator<BaseIt>::iterator_adaptor_(it)
          {
-            increment(); // init first value, happens to be the same method
          }
 
          tlv_iterator()
-            : super_type(BaseIt())
+            : tlv_iterator<BaseIt>::iterator_adaptor_(BaseIt())
          {
          }
+
          typedef tag_value<BaseIt> value_type;
-      private:
-         mutable value_type current_val;
 
-         void increment()
-         {
-            current_val.tag=asn1::codec::tag::decode(this->base_reference());
-            asn1::codec::length l=asn1::codec::length::decode(this->base_reference());
-            BaseIt itstart=this->base_reference();
-            std::advance(this->base_reference(),l.get_value());
-            current_val.value=typename value_type::value_boundaries(itstart,this->base_reference());
-         }
-      public:
-         BaseIt const& get_base_iterator() const
-         {
-            return this->base_reference();
-         }
-
-         BaseIt const& get_base_iterator()
-         {
-            return this->base_reference();
-         }
 
          typename tlv_iterator::reference dereference() const
          {
-            return current_val;
+            value_type val;
+            BaseIt it=this->base();
+            val.tag=asn1::codec::tag::decode(it);
+            asn1::codec::length l=asn1::codec::length::decode(it);
+            BaseIt startit=it;
+            std::advance(it,l.get_value());
+            val.value=typename value_type::value_boundaries(startit,it);
+            return val;
+         }
+         
+         void increment()
+         {
+            asn1::codec::tag::decode(this->base_reference());
+            asn1::codec::length l=asn1::codec::length::decode(this->base_reference());
+            std::advance(this->base_reference(),l.get_value());
          }
       };
    }

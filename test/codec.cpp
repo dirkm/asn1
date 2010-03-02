@@ -75,6 +75,7 @@ BOOST_AUTO_TEST_CASE(single_step_iterator_tag)
    const char single_tlv[]={'\x1F','\x24','\x04','\x01','\x02','\x03','\x04'};
    const char* it=single_tlv;
    tlv_array_type tlv_it(it);
+   tlv_array_type tlv_it2(it);
    // see test two_byte_tag
    const asn1::codec::tag& t=tlv_it->tag;
    const tlv_array_type::value_type::value_boundaries& v=tlv_it->value;
@@ -82,6 +83,16 @@ BOOST_AUTO_TEST_CASE(single_step_iterator_tag)
    BOOST_CHECK(t.get_format()==asn1::codec::format_simple);
    BOOST_CHECK(t.get_id()==0x24);
    BOOST_CHECK(v.second==(v.first+4));
+   BOOST_CHECK(v.first==(single_tlv+3));
    BOOST_CHECK(std::equal(v.first,v.second,single_tlv+3));
-   BOOST_CHECK(tlv_it.get_base_iterator()==single_tlv+7);
+   BOOST_CHECK(tlv_it==tlv_it);
+   BOOST_CHECK(tlv_it==tlv_it2);
+   ++tlv_it;
+   BOOST_CHECK(tlv_it!=tlv_it2);
+   //std::istringstream iss("een twee");
+   //std::istream_iterator<std::string> ssit(iss);
+   //BOOST_CHECK(*ssit=="een");
+   //BOOST_CHECK(*ssit=="een");
+   //ssit++;
+   //BOOST_CHECK(*ssit=="twee");
 }
