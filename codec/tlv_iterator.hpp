@@ -1,10 +1,11 @@
 #ifndef ASN1_CODEC_TLV_ITERATOR_HPP
 #define ASN1_CODEC_TLV_ITERATOR_HPP
 
-#include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/iterator/iterator_facade.hpp>
 
 #include "codec/length.hpp"
 #include "codec/tag.hpp"
+#include <boost/optional.hpp>
 
 namespace asn1
 {
@@ -19,45 +20,56 @@ namespace asn1
       };
 
       template <class BaseIt>
-      class tlv_iterator: public boost::iterator_adaptor<
+      class tlv_iterator: public boost::iterator_facade<
          tlv_iterator<BaseIt>, // Derived
-         BaseIt, 
          tag_value<BaseIt>, // Value
-         boost::single_pass_traversal_tag,
-         tag_value<BaseIt> // Reference
+         boost::single_pass_traversal_tag // do is_convertible trick
          >
       {
       public:
          explicit tlv_iterator(BaseIt& it)
-            : tlv_iterator<BaseIt>::iterator_adaptor_(it)
+            : current_it(it)
          {
          }
-
-         tlv_iterator()
-            : tlv_iterator<BaseIt>::iterator_adaptor_(BaseIt())
+         explicit tlv_iterator()
+            : current_it(BaseIt())
          {
          }
-
          typedef tag_value<BaseIt> value_type;
-
-
+      private:
+         BaseIt current_it;
+         // optimization because dereference and increment use similar algorithms
+         mutable boost::optional<BaseIt> next_it;
+         mutable value_type current_val;
+         
+      public:
          typename tlv_iterator::reference dereference() const
          {
-            value_type val;
-            BaseIt it=this->base();
-            val.tag=asn1::codec::tag::decode(it);
-            asn1::codec::length l=asn1::codec::length::decode(it);
-            BaseIt startit=it;
-            std::advance(it,l.get_value());
-            val.value=typename value_type::value_boundaries(startit,it);
-            return val;
+            *next_it=current_it;
+            current_val.tag=asn1::codec::tag::decode(*next_it);
+            asn1::codec::length l=asn1::codec::length::decode(*next_it);
+            BaseIt startit=*next_it;
+            std::advance(*next_it,l.get_value());
+            current_val.value=typename value_type::value_boundaries(startit,*next_it);
+            return current_val;
          }
          
+         bool equal(const tlv_iterator<BaseIt>& rval) const
+         {
+            return current_it==rval.current_it;
+         }
+
          void increment()
          {
-            asn1::codec::tag::decode(this->base_reference());
-            asn1::codec::length l=asn1::codec::length::decode(this->base_reference());
-            std::advance(this->base_reference(),l.get_value());
+            if(!next_it)
+            {
+               *next_it=current_it;
+               asn1::codec::tag::decode(*next_it);
+               asn1::codec::length l=asn1::codec::length::decode(*next_it);
+               std::advance(*next_it,l.get_value());
+            }
+            current_it=*next_it;
+            next_it=boost::none_t();
          }
       };
    }

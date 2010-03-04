@@ -6,7 +6,7 @@ ALL_OBJS:=$(OBJS) $(TEST_OBJS)
 BOOST_INC:=/home/dirk/localbuild/boost-trunk
 #BOOST_LIB:=/home/dirk/local/lib
 #EXTRAFLAGS:= -O2 -g
-EXTRAFLAGS:= -g
+EXTRAFLAGS:= -g -O2
 
 #derived variables
 INCLUDES:=-I$(BOOST_INC) -I.
