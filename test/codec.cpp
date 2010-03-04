@@ -8,6 +8,14 @@
 #include "codec/tagtypes.hpp"
 #include "codec/tlv_iterator.hpp"
 
+namespace
+{
+   template<typename T, std::size_t size> T* end(T (&array)[size]) 
+   { 
+      return array+size;
+   }
+}
+
 BOOST_AUTO_TEST_CASE(single_byte_length)
 {
    const char length_field[]={'\x10'};
@@ -89,6 +97,7 @@ BOOST_AUTO_TEST_CASE(single_step_iterator_tag)
    BOOST_CHECK(tlv_it==tlv_it2);
    ++tlv_it;
    BOOST_CHECK(tlv_it!=tlv_it2);
+   BOOST_CHECK(tlv_array_type(end(single_tlv))==tlv_it2);
    //std::istringstream iss("een twee");
    //std::istream_iterator<std::string> ssit(iss);
    //BOOST_CHECK(*ssit=="een");

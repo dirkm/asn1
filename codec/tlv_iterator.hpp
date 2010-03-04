@@ -27,7 +27,7 @@ namespace asn1
          >
       {
       public:
-         explicit tlv_iterator(BaseIt& it)
+         explicit tlv_iterator(BaseIt it)
             : current_it(it)
          {
          }
@@ -45,7 +45,7 @@ namespace asn1
       public:
          typename tlv_iterator::reference dereference() const
          {
-            *next_it=current_it;
+            next_it=current_it;
             current_val.tag=asn1::codec::tag::decode(*next_it);
             asn1::codec::length l=asn1::codec::length::decode(*next_it);
             BaseIt startit=*next_it;
@@ -54,7 +54,8 @@ namespace asn1
             return current_val;
          }
          
-         bool equal(const tlv_iterator<BaseIt>& rval) const
+         template <class OtherBaseIt>
+         bool equal(const tlv_iterator<OtherBaseIt>& rval) const
          {
             return current_it==rval.current_it;
          }
@@ -63,7 +64,7 @@ namespace asn1
          {
             if(!next_it)
             {
-               *next_it=current_it;
+               next_it=current_it;
                asn1::codec::tag::decode(*next_it);
                asn1::codec::length l=asn1::codec::length::decode(*next_it);
                std::advance(*next_it,l.get_value());

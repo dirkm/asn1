@@ -47,7 +47,7 @@ namespace asn1
             if((b&tagid_bitmask)!=tagid_bitmask)
             {
                // single byte representation
-               t.v|=b&tagid_bitmask;
+               t.v|=(b&tagid_bitmask);
             }
             else
             {
@@ -63,6 +63,7 @@ namespace asn1
           
                t.v|=tag_id;
             }
+            return t;
          };
 
          tag()
