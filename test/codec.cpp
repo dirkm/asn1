@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(single_step_iterator_tag)
    BOOST_CHECK(tlv_it==tlv_it2);
    ++tlv_it;
    BOOST_CHECK(tlv_it!=tlv_it2);
-   BOOST_CHECK(tlv_array_type(end(single_tlv))==tlv_it2);
+   BOOST_CHECK(tlv_array_type(end(single_tlv))==tlv_it);
    //std::istringstream iss("een twee");
    //std::istream_iterator<std::string> ssit(iss);
    //BOOST_CHECK(*ssit=="een");
