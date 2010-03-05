@@ -38,20 +38,22 @@ namespace asn1
          typedef tag_value<BaseIt> value_type;
       private:
          BaseIt current_it;
-         // optimization because dereference and increment use similar algorithms
-         mutable boost::optional<BaseIt> next_it;
-         mutable value_type current_val;
+         mutable boost::optional<value_type> current_val;
          
       public:
          typename tlv_iterator::reference dereference() const
          {
-            next_it=current_it;
-            current_val.tag=asn1::codec::tag::decode(*next_it);
-            asn1::codec::length l=asn1::codec::length::decode(*next_it);
-            BaseIt startit=*next_it;
-            std::advance(*next_it,l.get_value());
-            current_val.value=typename value_type::value_boundaries(startit,*next_it);
-            return current_val;
+            if(!current_val)
+            {
+               BaseIt it=current_it;
+               current_val=value_type();
+               current_val->tag=asn1::codec::tag::decode(it);
+               asn1::codec::length l=asn1::codec::length::decode(it);
+               BaseIt startit=it;
+               std::advance(it,l.get_value());
+               current_val->value=typename value_type::value_boundaries(startit,it);
+            }
+            return *current_val;
          }
          
          template <class OtherBaseIt>
@@ -62,15 +64,19 @@ namespace asn1
 
          void increment()
          {
-            if(!next_it)
+            if(!current_val)
             {
-               next_it=current_it;
-               asn1::codec::tag::decode(*next_it);
-               asn1::codec::length l=asn1::codec::length::decode(*next_it);
-               std::advance(*next_it,l.get_value());
+               asn1::codec::tag::decode(current_it);
+               asn1::codec::length l=asn1::codec::length::decode(current_it);
+               std::advance(current_it,l.get_value());
             }
-            current_it=*next_it;
-            next_it=boost::none_t();
+            else
+            {
+               // dereference and increment use similar algorithms
+               // so, we get the iterator from the last dereference
+               current_it=current_val->value.second;
+               current_val=boost::none_t();
+            }
          }
       };
    }
