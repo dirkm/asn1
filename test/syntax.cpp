@@ -1,5 +1,5 @@
-//#define BOOST_SPIRIT_DEBUG
-//#define BOOST_SPIRIT_LEXERTL_DEBUG
+#define BOOST_SPIRIT_DEBUG
+#define BOOST_SPIRIT_LEXERTL_DEBUG
 
 //#define BOOST_VARIANT_MINIMIZE_SIZE
 
@@ -65,5 +65,11 @@ BOOST_AUTO_TEST_CASE(parse_empty_module)
 BOOST_AUTO_TEST_CASE(parse_sdhpm)
 {
   const std::string& s=read_from_file("syntax_data/sdhpm.asn1");
+  BOOST_CHECK(asn1::syntax::parse(s.begin(),s.end()));
+}
+
+BOOST_AUTO_TEST_CASE(parse_handmade)
+{
+  const std::string& s=read_from_file("syntax_data/handmade.asn1");
   BOOST_CHECK(asn1::syntax::parse(s.begin(),s.end()));
 }
