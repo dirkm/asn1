@@ -21,22 +21,26 @@ namespace asn1
          tag(uint8_t class_type, uint8_t format, tag_type id):
             v((((tag_type)(class_type|format))<<shift_classformat)|id)
          {
-         };
+         }
+
+         tag()
+         {
+         }
 
          tagClass get_class() const // shifted
          {
             return static_cast<tagClass>((v>>shift_classformat) & class_bitmask);
-         };
+         }
 
          tagFormat get_format() const // shifted
          {
             return static_cast<tagFormat>((v>>shift_classformat) & format_bitmask);
-         };
+         }
 
          tag::tag_type get_id() const
          {
             return v & id_mask;
-         };
+         }
     
          template<typename InIt>
          static tag decode(InIt& it)
@@ -65,10 +69,6 @@ namespace asn1
             }
             return t;
          };
-
-         tag()
-         {
-         }
       private:
          tag_type v;
       };

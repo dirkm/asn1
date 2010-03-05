@@ -10,8 +10,8 @@
 
 namespace
 {
-   template<typename T, std::size_t size> T* end(T (&array)[size]) 
-   { 
+   template<typename T, std::size_t size> T* end(T (&array)[size])
+   {
       return array+size;
    }
 }
@@ -98,10 +98,27 @@ BOOST_AUTO_TEST_CASE(single_step_iterator_tag)
    ++tlv_it;
    BOOST_CHECK(tlv_it!=tlv_it2);
    BOOST_CHECK(tlv_array_type(end(single_tlv))==tlv_it);
-   //std::istringstream iss("een twee");
-   //std::istream_iterator<std::string> ssit(iss);
-   //BOOST_CHECK(*ssit=="een");
-   //BOOST_CHECK(*ssit=="een");
-   //ssit++;
-   //BOOST_CHECK(*ssit=="twee");
+}
+
+BOOST_AUTO_TEST_CASE(two_step_iterator_tag)
+{
+   char two_tlv[4+3+0x80]={'\x67','\x02','\xBE','\xAF',
+                             '\xC1','\x81','\x80'};
+   std::fill_n(two_tlv+4+3+1,0x80,'\x11');
+   const char* it=two_tlv;
+   tlv_array_type tlv_it(it);
+   const asn1::codec::tag& t=tlv_it->tag;
+   const tlv_array_type::value_type::value_boundaries& v=tlv_it->value;
+   BOOST_CHECK(t.get_class()==asn1::codec::class_application);
+   BOOST_CHECK(t.get_format()==asn1::codec::format_constructed);
+   BOOST_CHECK(t.get_id()==0x07);
+   BOOST_CHECK(std::equal(v.first,v.second,two_tlv+2));
+   ++tlv_it;
+   const asn1::codec::tag& t2=tlv_it->tag;
+   const tlv_array_type::value_type::value_boundaries& v2=tlv_it->value;
+   BOOST_CHECK(t2.get_class()==asn1::codec::class_private);
+   BOOST_CHECK(t2.get_format()==asn1::codec::format_simple);
+   BOOST_CHECK(t2.get_id()==0x01);
+   BOOST_CHECK(std::distance(v2.first,v2.second)==0x80);
+   BOOST_CHECK(std::equal(v2.first,v2.second,two_tlv+7));
 }
