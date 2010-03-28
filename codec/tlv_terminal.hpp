@@ -41,7 +41,6 @@ namespace asn1
    {
       using boost::spirit::token;
       using boost::spirit::qi::primitive_parser;
-      using boost::spirit::qi::skip_over;
       using boost::spirit::qi::info;
 
       ///////////////////////////////////////////////////////////////////////////
@@ -64,12 +63,11 @@ namespace asn1
                     , Attribute& attr) const
          {
             if (first != last) {
-               typedef typename
-                  boost::detail::iterator_traits<Iterator>::value_type
-                  token_type;
-
+               typedef typename boost::detail::iterator_traits<Iterator>::value_type token_type;
                token_type const& t = *first;
-               if (tag == t.tag) {
+
+               if (tag == t.tag) 
+               {
                   boost::spirit::traits::assign_to(t, attr);
                   ++first;
                   return true;
