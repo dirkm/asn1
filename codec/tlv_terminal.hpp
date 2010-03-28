@@ -70,6 +70,8 @@ namespace asn1
 
       ///////////////////////////////////////////////////////////////////////////
       
+      // TODO, this should take a unary predicate
+      
       struct asn1_tag_token
          : tlv_parser<asn1_tag_token>
       {
