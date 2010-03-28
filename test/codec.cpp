@@ -1,20 +1,12 @@
-//#include <fstream>
-//#include <string>
 #define BOOST_TEST_MODULE ASN1Codec
 #include <boost/test/included/unit_test.hpp>
 
 #include "codec/length.hpp"
 #include "codec/tag.hpp"
 #include "codec/tagtypes.hpp"
-#include "codec/tlv_iterator.hpp"
+#include "test/codec_util.hpp"
 
-namespace
-{
-   template<typename T, std::size_t size> T* end(T (&array)[size])
-   {
-      return array+size;
-   }
-}
+using asn1::test::end;
 
 BOOST_AUTO_TEST_CASE(single_byte_length)
 {
@@ -76,17 +68,15 @@ BOOST_AUTO_TEST_CASE(multi_byte_tag)
    BOOST_CHECK(t.get_id()==0x4891);
 }
 
-typedef asn1::codec::tlv_iterator<const char*> tlv_array_type;
-
 BOOST_AUTO_TEST_CASE(single_step_iterator_tag)
 {
    const char single_tlv[]={'\x1F','\x24','\x04','\x01','\x02','\x03','\x04'};
    const char* it=single_tlv;
-   tlv_array_type tlv_it(it);
-   tlv_array_type tlv_it2(it);
+   asn1::test::tlv_array_iterator tlv_it(it);
+   asn1::test::tlv_array_iterator tlv_it2(it);
    // see test two_byte_tag
    const asn1::codec::tag& t=tlv_it->tag;
-   const tlv_array_type::value_type::value_boundaries& v=tlv_it->value;
+   const asn1::test::tlv_array_iterator::value_type::value_boundaries& v=tlv_it->value;
    BOOST_CHECK(t.get_class()==asn1::codec::class_universal);
    BOOST_CHECK(t.get_format()==asn1::codec::format_simple);
    BOOST_CHECK(t.get_id()==0x24);
@@ -97,7 +87,7 @@ BOOST_AUTO_TEST_CASE(single_step_iterator_tag)
    BOOST_CHECK(tlv_it==tlv_it2);
    ++tlv_it;
    BOOST_CHECK(tlv_it!=tlv_it2);
-   BOOST_CHECK(tlv_array_type(end(single_tlv))==tlv_it);
+   BOOST_CHECK(asn1::test::tlv_array_iterator(end(single_tlv))==tlv_it);
 }
 
 BOOST_AUTO_TEST_CASE(two_step_iterator_tag)
@@ -106,16 +96,16 @@ BOOST_AUTO_TEST_CASE(two_step_iterator_tag)
                              '\xC1','\x81','\x80'};
    std::fill_n(two_tlv+4+3+1,0x80,'\x11');
    const char* it=two_tlv;
-   tlv_array_type tlv_it(it);
+   asn1::test::tlv_array_iterator tlv_it(it);
    const asn1::codec::tag& t=tlv_it->tag;
-   const tlv_array_type::value_type::value_boundaries& v=tlv_it->value;
+   const asn1::test::tlv_array_iterator::value_type::value_boundaries& v=tlv_it->value;
    BOOST_CHECK(t.get_class()==asn1::codec::class_application);
    BOOST_CHECK(t.get_format()==asn1::codec::format_constructed);
    BOOST_CHECK(t.get_id()==0x07);
    BOOST_CHECK(std::equal(v.first,v.second,two_tlv+2));
    ++tlv_it;
    const asn1::codec::tag& t2=tlv_it->tag;
-   const tlv_array_type::value_type::value_boundaries& v2=tlv_it->value;
+   const asn1::test::tlv_array_iterator::value_type::value_boundaries& v2=tlv_it->value;
    BOOST_CHECK(t2.get_class()==asn1::codec::class_private);
    BOOST_CHECK(t2.get_format()==asn1::codec::format_simple);
    BOOST_CHECK(t2.get_id()==0x01);

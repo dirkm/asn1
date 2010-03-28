@@ -4,26 +4,18 @@
 #include <boost/iterator/iterator_facade.hpp>
 
 #include "codec/length.hpp"
-#include "codec/tag.hpp"
+#include "codec/tlv.hpp"
 #include <boost/optional.hpp>
 
 namespace asn1
 {
    namespace codec
    {
-      template<typename BaseIt>
-      struct tag_value
-      {
-         typedef std::pair<BaseIt,BaseIt> value_boundaries;
-         asn1::codec::tag tag;
-         value_boundaries value;
-      };
-
       template <class BaseIt>
       class tlv_iterator: public boost::iterator_facade<
          tlv_iterator<BaseIt>, // Derived
          tag_value<BaseIt>, // Value
-         boost::single_pass_traversal_tag // do is_convertible trick
+         boost::forward_traversal_tag // do is_convertible trick
          >
       {
       public:

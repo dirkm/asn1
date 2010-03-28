@@ -71,7 +71,18 @@ namespace asn1
          };
       private:
          tag_type v;
+         friend bool operator==(const tag&l, const tag&r);
       };
+
+      bool operator==(const tag&l, const tag&r)
+      {
+         return l.v==r.v;
+      }
+      
+      bool operator!=(const tag&l, const tag&r)
+      {
+         return l!=r;
+      }
    }
 }
 

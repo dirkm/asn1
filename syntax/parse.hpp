@@ -236,6 +236,7 @@ namespace asn1
             sizeConstraint=
                ( token(SIZE_TOK) >> subtypeSpec )
                |
+               // not sure of the below
                ( token(BEGIN_BRACKET_TOK) >> sizeConstraint >> token(END_BRACKET_TOK) )
                ;
 
@@ -383,7 +384,7 @@ namespace asn1
 
          return (r && (first==last));
       }
-
    }
 }
+
 #endif

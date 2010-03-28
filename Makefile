@@ -1,5 +1,5 @@
 OBJS:= syntax/generate_static_lex.o 
-TEST_OBJS:=test/syntax.o test/read_from_file.o test/codec.o
+TEST_OBJS:=test/syntax.o test/read_from_file.o test/codec.o test/parse_experiments.o
 
 ALL_OBJS:=$(OBJS) $(TEST_OBJS)
 
@@ -12,7 +12,7 @@ EXTRAFLAGS:= -g
 INCLUDES:=-I$(BOOST_INC) -I.
 CPPFLAGS:=$(INCLUDES) $(EXTRAFLAGS)
 
-all: syntax/lex_static.hpp test/syntax test/codec
+all: test/syntax test/codec test/parse_experiments
 
 clean:
 	rm -f  $(ALL_OBJS) $(ALL_OBJS:.o=.d) $(PROGRAMS) syntax/lex_static.hpp
@@ -24,6 +24,9 @@ test/syntax: test/read_from_file.o test/syntax.o
 	${CXX} $^ -o $@
 
 test/codec: test/codec.o 
+	${CXX} $^ -o $@
+
+test/parse_experiments: test/parse_experiments.o
 	${CXX} $^ -o $@
 
 syntax/lex_static.hpp: syntax/generate_static_lex

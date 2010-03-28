@@ -1,6 +1,9 @@
 #ifndef ASN1_CODEC_LENGTH_HPP
 #define ASN1_CODEC_LENGTH_HPP
 
+#include <stdint.h>
+#include <assert.h>
+
 namespace asn1
 {
   namespace codec
