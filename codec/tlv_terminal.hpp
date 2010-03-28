@@ -4,14 +4,11 @@
 #include "codec/tlv.hpp"
 
 #include <boost/spirit/home/support/info.hpp>
-#include <boost/spirit/home/support/attributes.hpp>
 #include <boost/spirit/home/support/common_terminals.hpp>
-#include <boost/spirit/home/qi/skip_over.hpp>
 #include <boost/spirit/home/qi/domain.hpp>
 #include <boost/spirit/home/qi/parser.hpp>
 #include <boost/spirit/home/qi/meta_compiler.hpp>
 #include <boost/spirit/home/qi/detail/assign_to.hpp>
-#include <boost/range/iterator_range.hpp>
 #include <boost/fusion/include/vector.hpp>
 #include <boost/fusion/include/at.hpp>
 
@@ -43,30 +40,24 @@ namespace asn1
       using boost::spirit::qi::primitive_parser;
       using boost::spirit::qi::info;
 
-      ///////////////////////////////////////////////////////////////////////////
-      struct asn1_tag_token
-         : primitive_parser<asn1_tag_token>
+      template <typename Derived>
+      struct tlv_parser : primitive_parser<Derived>
       {
          template <typename Context, typename Iterator>
          struct attribute
          {
-            typedef typename Iterator::value_type type;
+            typedef asn1::codec::tag_value<Iterator> type;
          };
 
-         asn1_tag_token(const asn1::codec::tag& tag_)
-            : tag(tag_) {}
-
-         template <typename Iterator, typename Context
-                   , typename Skipper, typename Attribute>
-         bool parse(Iterator& first, Iterator const& last
-                    , Context& /*context*/, Skipper const& skipper
-                    , Attribute& attr) const
+         template <typename Iterator, typename Context, typename Skipper, typename Attribute>
+         bool parse(Iterator& first, Iterator const& last,
+                    Context& context, Skipper const& /*skipper*/, Attribute& attr) const
          {
-            if (first != last) {
+            if (first != last)
+            {
                typedef typename boost::detail::iterator_traits<Iterator>::value_type token_type;
                token_type const& t = *first;
-
-               if (tag == t.tag) 
+               if (this->derived().test(*first, context))
                {
                   boost::spirit::traits::assign_to(t, attr);
                   ++first;
@@ -75,13 +66,21 @@ namespace asn1
             }
             return false;
          }
+      };
 
-         template <typename Context>
-         info what(Context& /*context*/) const
+      ///////////////////////////////////////////////////////////////////////////
+      
+      struct asn1_tag_token
+         : tlv_parser<asn1_tag_token>
+      {
+         asn1_tag_token(const asn1::codec::tag& tag_)
+            : tag(tag_) {}
+
+         template <typename ValueParam, typename Context>
+         bool test(ValueParam tv, Context& context) const
          {
-            return info("tag");
+            return tag == tv.tag;
          }
-
          asn1::codec::tag tag;
       };
    }
