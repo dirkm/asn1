@@ -15,40 +15,46 @@
 #include <boost/fusion/include/vector.hpp>
 #include <boost/fusion/include/at.hpp>
 
-namespace asn1 
-{ 
-   namespace terminal 
+namespace asn1
+{
+   namespace terminal
    {
       BOOST_SPIRIT_TERMINAL(asn1_tag);
    }
 }
 
-namespace boost 
-{ 
+namespace boost
+{
    namespace spirit
    {
       ///////////////////////////////////////////////////////////////////////////
       // Enablers
       ///////////////////////////////////////////////////////////////////////////
-      
-      // enables token(id)
-      template <typename A0>
-      struct use_terminal<
-         qi::domain
-         , terminal_ex<asn1::terminal::tag::asn1_tag, fusion::vector1<A0> >
-         > : mpl::true_ {};
-      
-      // enables *lazy* token(id)
+
       template <>
-      struct use_lazy_terminal<
-         qi::domain, asn1::terminal::tag::asn1_tag, 1
-         > : mpl::true_ {};
+      struct use_terminal<
+         qi::domain,
+         asn1::terminal::tag::asn1_tag>
+      : mpl::true_ {};
+
+      // enables token(id)
+      // template <typename A0>
+      // struct use_terminal<
+      //    qi::domain
+      //    , terminal_ex<asn1::terminal::tag::asn1_tag, fusion::vector1<A0> >
+      //    > : mpl::true_ {};
+
+      // // enables *lazy* token(id)
+      // template <>
+      // struct use_lazy_terminal<
+      //    qi::domain, asn1::terminal::tag::asn1_tag, 1
+      //    > : mpl::true_ {};
    }
 }
 
-namespace asn1 
-{ 
-   namespace terminal 
+namespace asn1
+{
+   namespace terminal
    {
       using boost::spirit::token;
       using boost::spirit::qi::primitive_parser;
@@ -57,15 +63,14 @@ namespace asn1
 
       ///////////////////////////////////////////////////////////////////////////
       template <typename TokenId>
-      struct asn1_tag_token 
+      struct asn1_tag_token
          : primitive_parser<asn1_tag_token<TokenId> >
       {
-         // template <typename Context, typename Iterator>
-         // struct attribute
-         // {
-         //    typedef Iterator iterator_type;
-         //    typedef boost::iterator_range<iterator_type> type;
-         // };
+         template <typename Context, typename Iterator>
+         struct attribute
+         {
+            typedef typename Iterator::value_type type;
+         };
 
          asn1_tag_token(const asn1::codec::tag& tag_)
             : tag(tag_) {}
@@ -79,8 +84,8 @@ namespace asn1
             skip_over(first, last, skipper);   // always do a pre-skip
 
             if (first != last) {
-               typedef typename 
-                  boost::detail::iterator_traits<Iterator>::value_type 
+               typedef typename
+                  boost::detail::iterator_traits<Iterator>::value_type
                   token_type;
 
                token_type const& t = *first;
@@ -104,27 +109,54 @@ namespace asn1
    }
 }
 
-namespace boost 
-{ 
-   namespace spirit 
-   { 
+namespace boost
+{
+   namespace spirit
+   {
       namespace qi
       {
          ///////////////////////////////////////////////////////////////////////////
          // Parser generators: make_xxx function (objects)
          ///////////////////////////////////////////////////////////////////////////
-         template <typename Modifiers, typename TokenId>
-         struct make_primitive<terminal_ex<asn1::terminal::tag::asn1_tag, boost::fusion::vector1<TokenId> >
-                               , Modifiers>
+         // template <typename Modifiers, typename TokenId>
+         // struct make_primitive<terminal_ex<asn1::terminal::tag::asn1_tag, boost::fusion::vector1<TokenId> >
+         //                       , Modifiers>
+         // {
+         //    typedef asn1::terminal::asn1_tag_token<TokenId> result_type;
+
+         //    template <typename Terminal>
+         //    result_type operator()(Terminal const& term, unused_type) const
+         //    {
+         //       return result_type(boost::fusion::at_c<0>(term.args));
+         //    }
+         // };
+
+         class Brol{};
+
+         template <typename Modifiers>
+         struct make_primitive<asn1::terminal::tag::asn1_tag, Modifiers>
          {
-            typedef asn1::terminal::asn1_tag_token<TokenId> result_type;
-            
-            template <typename Terminal>
-            result_type operator()(Terminal const& term, unused_type) const
+            typedef asn1::terminal::asn1_tag_token<Brol> result_type;
+
+            result_type operator()(unused_type, unused_type) const
             {
-               return result_type(boost::fusion::at_c<0>(term.args));
+               return result_type(asn1::codec::tag(0,0,0));
             }
          };
+
+         // template <typename Modifiers, typename TokenId>
+         // struct make_primitive<terminal_ex<asn1::terminal::tag::asn1_tag, boost::fusion::vector1<TokenId> >
+         //                       , Modifiers>
+         // {
+         //    typedef asn1::terminal::asn1_tag_token<TokenId> result_type;
+
+         //    template <typename Terminal>
+         //    result_type operator()(Terminal const& term, unused_type) const
+         //    {
+         //       return result_type(boost::fusion::at_c<0>(term.args));
+         //    }
+         // };
+
       }
    }
 }
