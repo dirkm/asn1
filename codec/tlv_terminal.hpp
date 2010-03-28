@@ -19,7 +19,7 @@ namespace asn1
 {
    namespace terminal
    {
-      BOOST_SPIRIT_TERMINAL(asn1_tag);
+      BOOST_SPIRIT_TERMINAL_EX(asn1_tag);
    }
 }
 
@@ -27,28 +27,11 @@ namespace boost
 {
    namespace spirit
    {
-      ///////////////////////////////////////////////////////////////////////////
-      // Enablers
-      ///////////////////////////////////////////////////////////////////////////
-
-      template <>
+      template <typename A0>
       struct use_terminal<
          qi::domain,
-         asn1::terminal::tag::asn1_tag>
+         terminal_ex<asn1::terminal::tag::asn1_tag,fusion::vector1<A0> > >
       : mpl::true_ {};
-
-      // enables token(id)
-      // template <typename A0>
-      // struct use_terminal<
-      //    qi::domain
-      //    , terminal_ex<asn1::terminal::tag::asn1_tag, fusion::vector1<A0> >
-      //    > : mpl::true_ {};
-
-      // // enables *lazy* token(id)
-      // template <>
-      // struct use_lazy_terminal<
-      //    qi::domain, asn1::terminal::tag::asn1_tag, 1
-      //    > : mpl::true_ {};
    }
 }
 
@@ -62,9 +45,8 @@ namespace asn1
       using boost::spirit::qi::info;
 
       ///////////////////////////////////////////////////////////////////////////
-      template <typename TokenId>
       struct asn1_tag_token
-         : primitive_parser<asn1_tag_token<TokenId> >
+         : primitive_parser<asn1_tag_token>
       {
          template <typename Context, typename Iterator>
          struct attribute
@@ -81,8 +63,6 @@ namespace asn1
                     , Context& /*context*/, Skipper const& skipper
                     , Attribute& attr) const
          {
-            skip_over(first, last, skipper);   // always do a pre-skip
-
             if (first != last) {
                typedef typename
                   boost::detail::iterator_traits<Iterator>::value_type
@@ -118,48 +98,20 @@ namespace boost
          ///////////////////////////////////////////////////////////////////////////
          // Parser generators: make_xxx function (objects)
          ///////////////////////////////////////////////////////////////////////////
-         // template <typename Modifiers, typename TokenId>
-         // struct make_primitive<terminal_ex<asn1::terminal::tag::asn1_tag, boost::fusion::vector1<TokenId> >
-         //                       , Modifiers>
-         // {
-         //    typedef asn1::terminal::asn1_tag_token<TokenId> result_type;
-
-         //    template <typename Terminal>
-         //    result_type operator()(Terminal const& term, unused_type) const
-         //    {
-         //       return result_type(boost::fusion::at_c<0>(term.args));
-         //    }
-         // };
-
-         class Brol{};
-
-         template <typename Modifiers>
-         struct make_primitive<asn1::terminal::tag::asn1_tag, Modifiers>
+         template <typename Modifiers, typename A0>
+         struct make_primitive<
+            terminal_ex<asn1::terminal::tag::asn1_tag,fusion::vector1<A0> >, Modifiers >
          {
-            typedef asn1::terminal::asn1_tag_token<Brol> result_type;
+            typedef asn1::terminal::asn1_tag_token result_type;
 
-            result_type operator()(unused_type, unused_type) const
+            template <typename Terminal>
+            result_type operator()(Terminal const& term, unused_type) const
             {
-               return result_type(asn1::codec::tag(0,0,0));
+               return result_type(fusion::at_c<0>(term.args));
             }
          };
-
-         // template <typename Modifiers, typename TokenId>
-         // struct make_primitive<terminal_ex<asn1::terminal::tag::asn1_tag, boost::fusion::vector1<TokenId> >
-         //                       , Modifiers>
-         // {
-         //    typedef asn1::terminal::asn1_tag_token<TokenId> result_type;
-
-         //    template <typename Terminal>
-         //    result_type operator()(Terminal const& term, unused_type) const
-         //    {
-         //       return result_type(boost::fusion::at_c<0>(term.args));
-         //    }
-         // };
-
       }
    }
 }
 
 #endif
-
