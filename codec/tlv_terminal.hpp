@@ -83,6 +83,13 @@ namespace asn1
          {
             return tag == tv.tag;
          }
+
+         template <typename Context>
+         info what(Context& /*context*/) const
+         {
+            return info("asn1_tag");
+         }
+
          asn1::codec::tag tag;
       };
    }
