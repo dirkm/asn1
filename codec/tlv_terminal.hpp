@@ -104,6 +104,11 @@ namespace boost
          ///////////////////////////////////////////////////////////////////////////
          // Parser generators: make_xxx function (objects)
          ///////////////////////////////////////////////////////////////////////////
+// required change to make customizable on iterator (see plain token)
+//         template <typename Modifiers, typename Iterator>
+//         struct make_primitive<
+//            terminal_ex<asn1::terminal::tag::asn1_tag,fusion::vector1<bool (tag_value<Iterator>)> >, Modifiers >
+
          template <typename Modifiers, typename A0>
          struct make_primitive<
             terminal_ex<asn1::terminal::tag::asn1_tag,fusion::vector1<A0> >, Modifiers >
