@@ -9,14 +9,14 @@
 
 using asn1::test::end;
 
-asn1::terminal::asn1_tag_token  a(asn1::codec::tag(0,0,0));
+asn1::terminal::asn1_token  a(asn1::codec::tag(0,0,0));
 
 template <typename Iterator>
 struct manual_parser1 : boost::spirit::qi::grammar<Iterator, typename Iterator::value_type()>
 {
     manual_parser1() : manual_parser1::base_type(start)
     {
-       start=asn1::terminal::asn1_tag_token(asn1::codec::tag(0,0,0));
+       start=asn1::terminal::asn1_token(asn1::codec::tag(0,0,0));
     }
 
    boost::spirit::qi::rule<Iterator,typename Iterator::value_type()> start;

@@ -72,10 +72,10 @@ namespace asn1
       
       // TODO, this should take a unary predicate
       
-      struct asn1_tag_token
-         : tlv_parser<asn1_tag_token>
+      struct asn1_token
+         : tlv_parser<asn1_token>
       {
-         asn1_tag_token(const asn1::codec::tag& tag_)
+         asn1_token(const asn1::codec::tag& tag_)
             : tag(tag_) {}
 
          template <typename ValueParam, typename Context>
@@ -113,7 +113,7 @@ namespace boost
          struct make_primitive<
             terminal_ex<asn1::terminal::tag::asn1_tag,fusion::vector1<A0> >, Modifiers >
          {
-            typedef asn1::terminal::asn1_tag_token result_type;
+            typedef asn1::terminal::asn1_token result_type;
 
             template <typename Terminal>
             result_type operator()(Terminal const& term, unused_type) const
